@@ -1,21 +1,26 @@
-from cmath import sqrt
-import cmath
+import math
 
-def verificarPrimo(p):
+def verificar_primo(p):
     primo = (p % 2 != 0 or p <= 2) and p != 1
-    raiz = sqrt(p)
+    raiz = math.sqrt(p)
 
-    i = cmath.phase(3)
-    while i <= cmath.phase(raiz):
-        if p % i == 0:
+    for i in range(3, int(raiz)):
+        if (p % i == 0):
             primo = False
-            i = cmath.phase(i + raiz)
-            i+=1
+            i = math.floor(i + raiz)
 
     return primo
 
 start = 1
+end = 100000
+primos = []
 
-while start <= 1000:
-    if verificarPrimo(start):
-        print(start)
+while start <= end:
+    if verificar_primo(start):
+        primos.append(start)
+    
+    start += 1
+
+string_primos = [str(i) for i in primos]
+
+print(f"Primos de {start} até {end} => {','.join(string_primos)}")
