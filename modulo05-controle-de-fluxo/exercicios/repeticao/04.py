@@ -4,13 +4,13 @@ print("Acerte o número!\n\n>>É um número inteiro entre 0 e 10<<\n")
 MAX_ATTEMPTS = 3
 number_to_guess = randrange(0, 11) # pega um número aleatório de 0 a 10
 attempts = 0
-done = False
+done = False    
 
 def verificar_tentativa(num):
     if (num == number_to_guess):
         print("You Win! 😎")
         return True
-    elif (attempts == MAX_ATTEMPTS):
+    elif (attempts >= MAX_ATTEMPTS):
         print("Game Over, suas tentativas esgotaram! 😓")
         return True
     elif (num > number_to_guess):
@@ -29,4 +29,5 @@ while not done:
         inputValue = int(input(f"Tentativa {attempts}:\n"))
         done = verificar_tentativa(inputValue)
     except ValueError:
+        attempts -= 1
         print("Valor inválido. Tente novamente!\n")
