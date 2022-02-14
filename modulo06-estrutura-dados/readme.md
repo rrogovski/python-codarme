@@ -8,7 +8,7 @@
 
 ```python
 my_list_empty = [] # Initialize an empty list
-my_list_initialized = [42, "Doulgas Adams", "Guia do Mochileiro das Galáxias"] # Initialize an list with some values
+my_list_initialized = [42, "Doulgas Adams", "Guia do Mochileiro das Galáxias"] # Initialize a list with some values
 type(my_list_initialized) # output: <class 'list'>
 ```
 Podemos acessar valores de uma lista, pelo seu índice:
@@ -131,7 +131,7 @@ for elem in my_list_initialized:
 
 ```python
 my_tuple_empty = () # Initialize an empty tuple
-my_tuple_initialized = (5 , 3 , 2, 7) # Initialize an tuple with some values
+my_tuple_initialized = (5 , 3 , 2, 7) # Initialize a tuple with some values
 type(my_tuple_initialized) # output: <class 'tuple'>
 ```
 O uso do parênteses é opcional, mas é uma boa prática usá-los para evitar o _trailing comma_:
@@ -154,3 +154,64 @@ A diferença do uso entre listas e tuplas:
 Outra grande diferença em tuplas, é que como fou dito anteriormente sobre sua imutabilidade, não podemos atribuir, remover, incluir ou alterar dados em uma tupla.
 
 Assim como em listas, tuplas também podem armazernar listas ou outras tuplas.
+
+Em geral usamos de desempacotamento `unpacking` para acessar os dados de uma tupla, mas o mesmo serve para listas, que certa forma lembre a desestruturação de objestos do _Javascript_:
+
+```python
+my_tuple = (42, "Doulgas Adams", "Guia do Mochileiro das Galáxias")
+reposta_para_tudo, autor, livro = my_tuple
+print(reposta_para_tudo, autor, livro) # output: 42 Doulgas Adams Guia do Mochileiro das Galáxias
+```
+
+## Conjuntos (_set_)
+
+### Sintaxe
+
+[Mais sobre conjuntos](https://docs.python.org/pt-br/3/tutorial/datastructures.html?highlight=itera#sets)
+
+```python
+my_set_empty = set() # Initialize an empty set
+my_set_initialized = set(["Carol Danvers", "Frankie Raye"]) # Initialize a set with some values
+my_set_initialized = {"Carol Danvers", "Frankie Raye"} # Initialize a set with some values
+type(my_set_initialized) # output: <class 'set'>
+```
+
+Chaves ou a função `set()` podem ser usados para criar conjuntos. Note: para criar um conjunto vazio você precisa usar `set()`, não `{}`; este último cria um dicionário vazio, uma estrutura de dados que discutiremos na próxima seção. 
+
+Particularidades dos conjuntos:
+
+ * Não aceita valores repetidos, mesmo que ao inicializar um conjunto com elementos repetidos, ou utilizar o método `add`, todos eles serão únicos:
+    ```python
+        my_set = {"Carol Danvers", "Frankie Raye", "Carol Danvers"}
+        print(my_set) # output: {'Frankie Raye', 'Carol Danvers'}
+        my_set.add("Carol Danvers")
+        my_set.add("Norrin Radd")
+        print(my_set) # output: {'Norrin Radd', 'Frankie Raye', 'Carol Danvers'}
+    ``` 
+ * Conjuntos não garantem a ordem de inserçao dos elementos.
+ * Por ter essa caracteristica de só ter elementos únicos podemos extrair de uma lista, apenas os elemetos únicos usando um `set`:
+   ```python
+        my_set = set(["Carol Danvers", "Frankie Raye", "Carol Danvers"])
+        print(my_set) # output: {'Frankie Raye', 'Carol Danvers'}
+    ```
+ * Podemos fazer a união de conjuntos, assim como em conjutos matemáticos:
+   ```python
+        my_set = {"Carol Danvers", "Frankie Raye", "Norrin Radd"}
+        my_set2 = set(["Carol Danvers", "Adam Warlock", "Norrin Radd"])
+        print(my_set.union(my_set2)) # usando o método union output: {'Frankie Raye', 'Norrin Radd', 'Adam Warlock', 'Carol Danvers'}
+        print(my_set | my_set2) # usando o operador pipe output: {'Frankie Raye', 'Norrin Radd', 'Adam Warlock', 'Carol Danvers'}
+    ``` 
+ * Podemos fazer a interseção de conjuntos, assim como em conjutos matemáticos:
+   ```python
+        my_set = {"Carol Danvers", "Frankie Raye", "Norrin Radd"}
+        my_set2 = set(["Carol Danvers", "Adam Warlock", "Norrin Radd"])
+        print(my_set.intersection(my_set2)) # usando o método intersection output: {'Norrin Radd', 'Carol Danvers'}
+        print(my_set & my_set2) # usando o operador & output: {'Norrin Radd', 'Carol Danvers'}
+    ```
+ * Podemos fazer a diferença de conjuntos, assim como em conjutos matemáticos:
+   ```python
+        my_set = {"Carol Danvers", "Frankie Raye", "Norrin Radd"}
+        my_set2 = set(["Carol Danvers", "Adam Warlock", "Norrin Radd"])
+        print(my_set.difference(my_set2)) # usando o método difference output: {'Frankie Raye'}
+        print(my_set - my_set2) # usando o operador - output: {'Frankie Raye'}
+    ```
