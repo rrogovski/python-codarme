@@ -215,3 +215,51 @@ Particularidades dos conjuntos:
         print(my_set.difference(my_set2)) # usando o método difference output: {'Frankie Raye'}
         print(my_set - my_set2) # usando o operador - output: {'Frankie Raye'}
     ```
+
+## Dicionários (_dict_)
+
+### Sintaxe
+
+[Mais sobre dicionários](https://docs.python.org/pt-br/3/tutorial/datastructures.html?highlight=itera#dictionaries)
+
+Sua sintaxe segue o padrão de chave/valor `{key: value}`, onde as chaves podem ser valores arbitrários, podendo ser _strings_ ou interios:
+
+```python
+my_dict_empty = {} # Initialize an empty dict
+my_dict_initialized = {1:"Manwë", 2:"Aulë", 3:"Yavanna"} # Initialize a dict with some values
+type(my_dict_initialized) # output: <class 'dict'>
+```
+Particularidades dos dicionários:
+
+ * Para acessar seus valores devemos informar qual a chave:
+    ```python
+        my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+        print(my_dict['2']) # output: Aulë
+    ```
+ * Ao tentar acesar uma chave que não existe temos o erro de `KeyError`:
+    ```python
+        my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+        print(my_dict['22'])
+        # output:
+        # Traceback (most recent call last):
+        # File "<stdin>", line 1, in <module>
+        # KeyError: '22
+    ```
+ * Geralmente utilizado para representação de objetos, semelhante ao `JSON`:
+    ```python
+        vala = {"name":"Yavanna", "race":"Ainur"}
+        print(vala['name']) # output: Yavanna
+    ```
+ * Assim como em listas, tuplas e conjuntos, também podemos ter chaves para armazenar essas estruturas de dados (listas, tuplas, conjuntos e dicionários):
+    ```python
+        valar = {
+            "description": "The Valar were the fourteen Ainur who, after being molded of Eru's thought, entered Arda after its creation",
+            "race":"Ainur",
+            "ainur": [
+                {"name":"Manwë"},
+                {"name":"Aulë"},
+                {"name":"Yavanna"}
+            ]
+        }
+        print(valar['ainur'][2]['name']) # Acessando o dicionário pela chave 'ainur' -> acessando a lista pelo seu índice 2 -> acessando o dicionário pela sua chave 'name' output: Yavanna
+    ```
