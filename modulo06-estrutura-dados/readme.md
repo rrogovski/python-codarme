@@ -263,3 +263,101 @@ Particularidades dos dicionários:
         }
         print(valar['ainur'][2]['name']) # Acessando o dicionário pela chave 'ainur' -> acessando a lista pelo seu índice 2 -> acessando o dicionário pela sua chave 'name' output: Yavanna
     ```
+ * Método para retornar as chaves de um dicionário:
+    ```python
+        my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+        my_dict.keys() # output: dict_keys([1, '2', 'tres'])
+    ```
+ * Método para retornar os valores de um dicionário:
+    ```python
+        my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+        my_dict.values() # output: dict_values(['Manwë', 'Aulë', 'Yavanna'])
+    ```
+ * Método para retornar os itens de um dicionário:
+    ```python
+        my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+        my_dict.items() # output: dict_items([(1, 'Manwë'), ('2', 'Aulë'), ('tres', 'Yavanna')])
+    ```
+
+## Iterações (_Iterables_)
+### Sintaxe
+
+[Mais sobre iterações](https://docs.python.org/pt-br/3/tutorial/datastructures.html?highlight=itera#looping-techniques)
+
+Podemos iterar sobre qualquer usa dessas estruturas de dados que vimos acima, podemos usar o `for in`, pois todas elas são [_Iterables_](https://www.pythonlikeyoumeanit.com/Module2_EssentialsOfPython/Iterables.html):
+
+```python
+my_list = [42, "Doulgas Adams", "Guia do Mochileiro das Galáxias"]
+for elem in my_list:
+    print(elem)
+
+my_tuple = (42, "Doulgas Adams", "Guia do Mochileiro das Galáxias")
+for elem in my_tuple:
+    print(elem)
+
+my_set = {"Carol Danvers", "Frankie Raye", "Norrin Radd"}
+for elem in my_set:
+    print(elem)
+
+my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+for elem in my_dict:
+    print(elem)
+
+# Outra possibilidade de iterar sobre os dicionários
+my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+for k,v in my_dict.items():
+    print(k,v)
+```
+Aqui fica adento para a estrutura de conjuntos (_sets_), pois eles não são ordenados e ao tentar acessá-los por um índice, temos um `TypeError`:
+
+```python
+i = 0
+while i < len(my_set):
+    print(my_set[i])
+    i += 1
+# output:
+# Traceback (most recent call last):
+#  File "<stdin>", line 2, in <module>
+# TypeError: 'set' object is not subscriptable
+```
+
+Para a estrutua de dicionários (_dict_), ao tentar usar o `while`, pode acontecer que a `key` seja equivalente ao índice que estamos percorrendo, nesse caso tudo ocorre sem problemas:
+
+```python
+my_dict = {0:"Manwë", 1:"Aulë", 2:"Yavanna"}
+i = 0
+while i < len(my_dict):
+    print(my_dict[i])
+    i += 1
+```
+
+Mas pode acontecer que as chaves sejam diferente, nesse caso temos um `KeyError`, por isso é bom evitar o `while` para iterar sobre dicionários:
+
+```python
+my_dict = {1:"Manwë", "2":"Aulë", "tres":"Yavanna"}
+i = 0
+while i < len(my_dict):
+    print(my_dict[i])
+    i += 1
+# output:
+# Traceback (most recent call last):
+#  File "<stdin>", line 2, in <module>
+# KeyError: 0
+```
+Os dicionários posui algum métodos 
+
+Para as demais estruturas podemos usar o `while` sem preocupações:
+
+```python
+i = 0
+while i < len(my_list):
+    print(my_list[i])
+    i += 1
+```
+
+```python
+i = 0
+while i < len(my_tuple):
+    print(my_tuple[i])
+    i += 1
+```
