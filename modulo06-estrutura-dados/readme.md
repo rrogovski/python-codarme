@@ -148,8 +148,8 @@ print(len(my_tuple)) # output: 4
 ```
 A diferença do uso entre listas e tuplas:
 
-    * Listas são mutáveis, e seus elementos geralmente são homogêneos e são acessados iterando sobre a lista.
-    * Tuplas são imutáveis, e usualmente contém uma sequência heterogênea de elementos que são acessados via desempacotamento (ver a seguir nessa seção) ou índice (ou mesmo por um atributo no caso de namedtuples).
+* Listas são mutáveis, e seus elementos geralmente são homogêneos e são acessados iterando sobre a lista.
+* Tuplas são imutáveis, e usualmente contém uma sequência heterogênea de elementos que são acessados via desempacotamento (ver a seguir nessa seção) ou índice (ou mesmo por um atributo no caso de namedtuples).
 
 Outra grande diferença em tuplas, é que como fou dito anteriormente sobre sua imutabilidade, não podemos atribuir, remover, incluir ou alterar dados em uma tupla.
 
