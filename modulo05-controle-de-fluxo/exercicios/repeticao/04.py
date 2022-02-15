@@ -26,8 +26,8 @@ def verificar_tentativa(num):
 while not done:
     try:
         attempts += 1
-        inputValue = int(input(f"Tentativa {attempts}:\n"))
-        done = verificar_tentativa(inputValue)
+        input_value = int(input(f"Tentativa {attempts}:\n"))
+        done = verificar_tentativa(input_value)
     except ValueError:
         attempts -= 1
         print("Valor inválido. Tente novamente!\n")

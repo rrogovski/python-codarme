@@ -13,12 +13,12 @@ def verificar_primo(p):
 
 while True:
     try:
-        inputValue = int(input("Digite um número inteiro para verificar se ele é primo:\n"))
+        input_value = int(input("Digite um número inteiro para verificar se ele é primo:\n"))
     except ValueError:
         print("Valor inválido. Tente novamente!\n")
     else:
         break
 
-is_primo = verificar_primo(inputValue)
+is_primo = verificar_primo(input_value)
 
-print(f"O número {inputValue} {'é' if is_primo else 'não é'} primo!")
+print(f"O número {input_value} {'é' if is_primo else 'não é'} primo!")

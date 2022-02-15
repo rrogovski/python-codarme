@@ -23,13 +23,13 @@ class Cliente:
 cliente_fidelizado = Cliente("Norrin Radd")
 cliente_nao_fidelizado = Cliente("Silver Surfer")
 clientes = [cliente_fidelizado, cliente_nao_fidelizado]
-valorFrete = 30.0
+valor_frete = 30.0
 
 for i in range(len(clientes)):
     while True:
         try: 
-            inputValue = input(f"Olá, {clientes[i].get_name()}. Digite o valor da compra:\n")
-            valorCompra = float(re.sub(r'\.(?=\w+$)', '', inputValue.replace(',','')))
+            input_value = input(f"Olá, {clientes[i].get_name()}. Digite o valor da compra:\n")
+            valor_compra = float(re.sub(r'\.(?=\w+$)', '', input_value.replace(',','')))
         except ValueError:
             print("Valor digitado inválido. Tente novamente!")
             continue
@@ -38,21 +38,21 @@ for i in range(len(clientes)):
 
     while True:
         try: 
-            inputValue = input(f"{clientes[i].get_name()}, você participa de nosso programa de fidelidade? [s - sim | n - não]\n")
+            input_value = input(f"{clientes[i].get_name()}, você participa de nosso programa de fidelidade? [s - sim | n - não]\n")
         except ValueError:
             print("Valor digitado inválido. Tente novamente!")
             continue
-        if inputValue.lower() not in ['s','n']:
+        if input_value.lower() not in ['s','n']:
             print("Valor digitado inválido. Tente novamente!")
         else:
-            clientes[i].set_has_fidelidade(inputValue.lower())
+            clientes[i].set_has_fidelidade(input_value.lower())
             break
 
     # print(clientes[i])
 
-    valorFinal = valorCompra + valorFrete
+    valor_final = valor_compra + valor_frete
 
-    if (valorFinal > 100 or clientes[i].get_has_fidelidade() == 's'):
+    if (valor_final > 100 or clientes[i].get_has_fidelidade() == 's'):
         print("Seu cupom de desconto pode ser utilizado! 😎")
     else:
         print("Seu cupom de desconto pode não ser utilizado! 😢")

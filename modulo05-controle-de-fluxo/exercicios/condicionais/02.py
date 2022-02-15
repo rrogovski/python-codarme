@@ -1,24 +1,21 @@
-from unittest import result
-
-
 operations = { '1': 'Soma', '2': 'Subtração', '3': 'Multiplicação', '4': 'Divisão' }
 
 options = ' | '.join(f"{k} -> {v}" for k,v in operations.items())
 
-def soma(opA, opB):
-    return opA + opB
+def soma(op_a, op_b):
+    return op_a + op_b
 
-def subtracao(opA, opB):
-    return opA - opB
+def subtracao(op_a, op_b):
+    return op_a - op_b
 
-def multiplicacao(opA, opB):
-    return opA * opB
+def multiplicacao(op_a, op_b):
+    return op_a * op_b
 
-def divisao(opA, opB):
-    if (opB == 0):
+def divisao(op_a, op_b):
+    if (op_b == 0):
         raise Exception("Não é possível realizar divisão por zero!")
         
-    return opA / opB
+    return op_a / op_b
 
 actions = { '1': soma, '2': subtracao, '3': multiplicacao, '4': divisao }
 
@@ -30,7 +27,7 @@ actions = { '1': soma, '2': subtracao, '3': multiplicacao, '4': divisao }
 
 while True:
     try:
-        operandoA = float(input("Digite um número inteiro:\n"))
+        operando_a = float(input("Digite um número inteiro:\n"))
     except ValueError:
         print("Valor inválido. Tente novamente!\n")
     else:
@@ -38,7 +35,7 @@ while True:
 
 while True:
     try:
-        operandoB = float(input("Digite um número inteiro:\n"))
+        operando_b = float(input("Digite um número inteiro:\n"))
     except ValueError:
         print("Valor inválido. Tente novamente!\n")
     else:
@@ -68,16 +65,16 @@ while True:
 # if (operations.get(operacao))
 
 if (operacao == '1'):
-    result = soma(operandoA, operandoB)
+    result = soma(operando_a, operando_b)
     print(f"Valor da soma => {result:.2f}")
 elif (operacao == '2'):
-    result = subtracao(operandoA, operandoB)
+    result = subtracao(operando_a, operando_b)
     print(f"Valor da subtração => {result:.2f}")
 elif (operacao == '3'):
-    result = multiplicacao(operandoA, operandoB)
+    result = multiplicacao(operando_a, operando_b)
     print(f"Valor da multiplicação => {result:.2f}")
 elif (operacao == '4'):
-    result = divisao(operandoA, operandoB)
+    result = divisao(operando_a, operando_b)
     print(f"Valor da divisão => {result:.2f}")
 else:
     print("Operação não implementada!")

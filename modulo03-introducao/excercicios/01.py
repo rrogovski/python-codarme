@@ -1,12 +1,9 @@
-from numpy import True_
+my_string = "Is this a string?"
+my_int = 42
+my_float = 3.1415
+my_bool = True
 
+my_array_of_types = [my_string, my_int, my_float, my_bool]
 
-myString = "Is this a string?"
-myInt = 42
-myFloat = 3.1415
-myBool = True
-
-myArrayOfTypes = [myString, myInt, myFloat, myBool]
-
-for i in range(len(myArrayOfTypes)):
-    print(f"What type is this? : {myArrayOfTypes[i]} => This is a {type(myArrayOfTypes[i])}")
+for i in range(len(my_array_of_types)):
+    print(f"What type is this? : {my_array_of_types[i]} => This is a {type(my_array_of_types[i])}")
