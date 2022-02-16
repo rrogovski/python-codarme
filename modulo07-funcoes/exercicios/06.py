@@ -18,6 +18,8 @@ while True:
         input_value = int(input("✏  "))
     except (ValueError, IndexError):
         print("🚨 Valor inválido. Tente novamente!\n")
+    if input_value < 0:
+        print("🚨 Valor inválido. Tente novamente!\n")
     else:
         break
 
