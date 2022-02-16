@@ -1,3 +1,6 @@
+# Crivo de Eratóstenes
+# https://pt.khanacademy.org/computing/computer-science/cryptography/comp-number-theory/v/trial-division-primality-test-using-a-sieve-prime-adventure-part-5
+
 import math
 
 def verificar_primo(p):
