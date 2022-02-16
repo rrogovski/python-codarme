@@ -8,7 +8,7 @@ def fatorial(valor):
     acc = 1
 
     while valor > 0:
-        acc = acc * valor
+        acc *= valor
         valor -= 1
 
     return acc
