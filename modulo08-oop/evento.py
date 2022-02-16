@@ -1,3 +1,4 @@
+import json
 class Evento:
     id = 1
 
@@ -14,10 +15,12 @@ class Evento:
         print(f"Nome do evento: {self.nome}")
         print(f"Local do evento: {self.local}")
 
-    @classmethod
-    def criar_evento_online(cls, nome):
-        evento = cls(nome, local=f"https://site.com/eventos?id={cls.id}")
-        return evento
+    def to_json(self):
+        return json.dumps({
+            "id": self.id,
+            "local": self.local,
+            "nome": self.nome
+        })
 
     @staticmethod
     def calcular_limite_pessoas_por_area(area_m2):
@@ -29,14 +32,3 @@ class Evento:
             return 30
         else:
             return 0
-
-# ev1 = Evento("Aula de Python")
-# ev2 = Evento("Aula de Javascript", "Florianópolis")
-
-print(Evento.calcular_limite_pessoas_por_area(12))
-
-ev1_online = Evento.criar_evento_online("Live de Python")
-ev1_online.imprime_informacaoes()
-
-ev2_online = Evento.criar_evento_online("Live de Javascript")
-ev2_online.imprime_informacaoes()
