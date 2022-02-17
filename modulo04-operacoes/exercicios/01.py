@@ -8,3 +8,4 @@ while True:
         break
 
 print(f"O valor digitado ({input_int}) é {'par' if input_int % 2 == 0 else 'ímpar'}")
+print(f"O valor digitado ({input_int}) é {input_int % 2 == 0 and 'par' or 'ímpar'}")
