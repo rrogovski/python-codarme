@@ -11,11 +11,19 @@ while True:
     else:
         break
 
+# Utilizando try/except com KeyError
 for letra in input_value:
     try:
         letras[letra] += 1
     except KeyError:
         letras[letra] = 1
+
+# Usando in list
+# for letra in input_value:
+#     if letra in letras:
+#         letras[letra] += 1
+#     else:
+#         letras[letra] = 1
 
 print(f"📝 Palavra digitada => {input_value}")
 print(f"📝 Resultados:")
