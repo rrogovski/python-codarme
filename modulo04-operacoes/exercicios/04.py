@@ -48,7 +48,10 @@ for i in range(len(clientes)):
             clientes[i].set_has_fidelidade(input_value.lower())
             break
 
+    # Privado pero no mucho
+    # clientes[i]._Cliente__name = "Teste"
     # print(clientes[i])
+
 
     valor_final = valor_compra + valor_frete
 
