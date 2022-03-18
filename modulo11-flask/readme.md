@@ -30,4 +30,13 @@ def index():
 
 Quando criamos uma instância do _Flask_ precisamo informar um nome para essa aplicação. Para isso podemos usar a variável global do _python_ `__name__`, que se refere ao nome do próprio módulo que está sendo executado no momento.
 
+para executar a aplicação:
+
+`flask run --port=5500`
+
 ## Variáveis de ambiente do Flask
+
+É importante ressaltar que o _Flask_ depende de duas variáveis de ambiente, a `FLASK_APP` e `FLASK_ENV`:
+
+  * `FLASK_APP` serve para informar qual a nossa aplicação _python_ a ser executada dentro da _framework_ do _Flask_. No exemplo anterior executamos nossa aplicação sem precisar informar essa variável de ambiente, pois o arquivo `app.py` é interpretado como um ponto de entra para a aplicação que o _Flask_ deve executar, caso o nome do arquivo fosse `main.py` por exemplo, teriamos que executar informando para esse variável justamente esse arquivo, da seguinte maneira: `FLASK_APP=main.py flask run`.
+  * `FLASK_ENV` serve para informar se nossa aplicação está sendo executada em produção ou desenvolvimento. Repare que ao executar o comando acima, o _Flask_ informa que estamos em ambiente de produção, e toda alteração que fazemos o arquivo, temos que parar o _Flask_ e executar novamente, passando para essa variável o ambiente como desenvolvimento, temos o _live reload_, assim o _Flask_ identifica as alterações automaticamente. `FLASK_APP=main.py FLASK_ENV=development flask run`.
