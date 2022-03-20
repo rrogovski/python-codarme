@@ -188,3 +188,71 @@ def detalhar_evento(id):
 ```
 
 [Para saber mais sobre manipulação de erros no _Flask_](https://flask.palletsprojects.com/en/2.0.x/errorhandling/)
+
+## Criando um evento
+
+Para crirar novos recursos, no nosso caso, evento em nossa _API_ precisamos criar uma rota que permita o metódo _POST_, para isso fazemos:
+
+```py
+@app.route("/api/eventos/", methods=["POST"])
+def criar_evento():
+    return jsonify(teste="teste")
+```
+Mas precisamos enviar dados para que nossa _API_ possa criar o novo evento. Usando o _Postman_ podemos fazer isso conforme a imagem abaixo:
+
+![Postman](./img/01.png "Postman")
+
+E para que o _Flask_ possa pegar esses dados na requisição, vamos importar do _Flask_ o `request`. Usando o `request.data` podemos acessar os dados enviados pela rquisição e salvar em uma variável. E para retornar esses mesmos dados, apenas para teste, vamos usar o `json.loads` para retornar esses dados como _JOSN_. E podemos testar nosso _endpoint_ do _POST_:
+
+```py
+@app.route("/api/eventos/", methods=["POST"])
+def criar_evento():
+    data = json.loads(request.data)
+    return data
+```
+
+![Postman](./img/02.png "Postman")
+
+Agora podemos extrair os valores passados pela requisição para criarmos o nosso novo evento.
+
+Nesse caso vamos usar o `data.get("key")`, onde `key` é o nome da propriedade que quermos acessar. Também poderiamos fazer `data["key"]`, mas dessa forma se a requisição não enviar a `key` que estamos tentando acessar, nossa aplicação quebra. Utilizando o `data.get("key")`, caso tenha valor, será retornado o valor dessa `key`, caso contrário retornará `None`.
+
+```py
+@app.route("/api/eventos/", methods=["POST"])
+def criar_evento():
+    data = json.loads(request.data)
+    nome = data.get("nome")
+    local = data.get("local")
+
+    if local:
+        evento = Evento(nome=nome, local=local)
+    else:
+        evento = EventoOnline(nome=nome)
+        
+    eventos.append(evento)
+    return data
+```
+Ao fazer essa requisição _POST_ iremos adicionar o novo evento na lista de eventos. Para conferir basta fazer uma requisição para a rota _GET_ para listar os eventos.
+
+### Validação
+
+Como a regra de negocio da nossa aplicação diz que o nome do evento não pode ser nulo, devemos fazer essa validação, para isso pode fazer:
+
+```py
+@app.route("/api/eventos/", methods=["POST"])
+def criar_evento():
+    data = json.loads(request.data)
+    nome = data.get("nome")
+    local = data.get("local")
+
+    if not nome:
+        abort(HTTPStatus.BAD_REQUEST, "Property 'nome' is required!")
+
+    if local:
+        evento = Evento(nome=nome, local=local)
+    else:
+        evento = EventoOnline(nome=nome)
+
+    eventos.append(evento)
+    return data
+```
