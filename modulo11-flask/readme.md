@@ -271,3 +271,26 @@ def not_found(error_msg):
 def not_found(error_msg):
     return (jsonify(error=str(error_msg)), HTTPStatus.BAD_REQUEST)
 ```
+
+## Deletar evento
+
+Para deletar um evento, precisamos definir uma rota para o método _DELETE_, que assim como o _POST_ recebe o id do recuso que desejamos excluir:
+
+```py
+@app.route("/api/eventos/<int:id>", methods=["DELETE"])
+def deletar_evento(id):
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
+        
+        if not evento:
+            abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+        
+        eventos.remove(evento)
+
+        return jsonify({
+            "id":id,
+            "message": "Evento successfully deleted"
+        })
+    except AttributeError:
+        abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+```

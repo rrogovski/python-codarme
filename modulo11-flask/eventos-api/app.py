@@ -96,3 +96,20 @@ def criar_evento():
         "id": evento.id,
         "url": f"/api/eventos/{evento.id}"
     }
+    
+@app.route("/api/eventos/<int:id>", methods=["DELETE"])
+def deletar_evento(id):
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
+        
+        if not evento:
+            abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+        
+        eventos.remove(evento)
+
+        return jsonify({
+            "id":id,
+            "message": "Evento successfully deleted"
+        })
+    except AttributeError:
+        abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
