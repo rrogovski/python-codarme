@@ -1,5 +1,5 @@
-import json
-from flask import Flask, jsonify
+from http import HTTPStatus
+from flask import Flask, jsonify, abort, make_response
 from evento import Evento
 from evento_online import EventoOnline
 
@@ -41,8 +41,19 @@ def listar_eventos():
 #         if ev.id == id:
 #             return jsonify(ev.__dict__)
 
+@app.errorhandler(404)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
+
 @app.route("/api/eventos/<int:id>/")
 def detalhar_evento(id):
-    evento = find(lambda ev: ev.id == id, eventos)
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
 
-    return jsonify(evento.__dict__)
+        return jsonify(evento.__dict__)
+    except AttributeError:
+        abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+        
+        # Como definimos o @app.errorhandler(404) podemos deixas apenas o abort, pois o Flask cuida dessas execeções e quando for um erro 404 irá passar pela função que definimos em @app.errorhandler(404)
+        # data = { "error": f"Event id {id} not found!" }
+        # return make_response(jsonify(data), HTTPStatus.NOT_FOUND)

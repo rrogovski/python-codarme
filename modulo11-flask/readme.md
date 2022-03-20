@@ -120,3 +120,71 @@ def detalhar_evento(id):
 
 
 [Para saber mais sobre _lambda_](https://docs.python.org/3.8/library/types.html?highlight=lambda#types.LambdaType)
+
+## Lidando com erros no _Flask_
+
+Note que ao tentar usar o nossa rota para detalhar um evento, se passarmos como argumento um `id` que não existe, causa um erro na nossa aplicação. Para isso precisamos tratar essa situação. Para isso podemos usar o `abort` da biblioteca _Flask_.
+
+```py
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
+
+        return jsonify(evento.__dict__)
+    except AttributeError:
+        abort(404, "Event Not Found!")
+```
+
+Nesse caso usei o _try/except_ do _Python_ para que quando houver o error que a página no retornou antes do tratamento de erros, retornar o _status_ 404 com uma mensagem mais amigável.
+
+Também poderimos fazer da sequinte forma se usar o _try/except_:
+
+```py
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    for ev in eventos:
+       if ev.id == id:
+           return jsonify(ev.__dict__)
+
+    abort(404, "Event Not Found!")
+```
+
+Agora para retornar esse erro como _JSON_ usamos o `make_response` do _Flask_:
+
+```py
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
+
+        return jsonify(evento.__dict__)
+    except AttributeError:        
+        data = { "error": f"Event id {id} not found!" }
+        return make_response(jsonify(data), HTTPStatus.NOT_FOUND)
+```
+
+Mas para facilitar a manipulação de erros temos `@app.errorhandler`, pois da forma como foi feito acima teriamos de que tratar cadas uma das rotas caso não contrassemos um recurso.
+
+Para utilizar o `@app.errorhandler`, informamos o qual o _status code_ e definimos uma função que será executada quando esse _status code_ ocorrer em algum dos _endpoints_:
+
+```py
+@app.errorhandler(404)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
+```
+
+Como definimos o `@app.errorhandler(404)` podemos deixas apenas o abort, pois o Flask cuida dessas execeções e quando for um erro 404 irá passar pela função que definimos em `@app.errorhandler(404)`:
+
+```py
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    try:
+        evento = find(lambda ev: ev.id == id, eventos)
+
+        return jsonify(evento.__dict__)
+    except AttributeError:
+        abort(404, "Event Not Found!")
+```
+
+[Para saber mais sobre manipulação de erros no _Flask_](https://flask.palletsprojects.com/en/2.0.x/errorhandling/)
