@@ -18,6 +18,9 @@ ev2_online.imprime_informacaoes()
 
 eventos = [ev1, ev2, ev1_online, ev2_online]
 
+find = lambda func, elements: next((element for element in elements if func(element)), None)
+findall = lambda func, elements: [element for element in elements if func(element)]
+
 
 @app.route("/")
 def index():
@@ -31,3 +34,15 @@ def listar_eventos():
         eventos_dict.append(ev.__dict__)
 
     return jsonify(eventos_dict)
+    
+# @app.route("/api/eventos/<int:id>/")
+# def detalhar_evento(id):
+#     for ev in eventos:
+#         if ev.id == id:
+#             return jsonify(ev.__dict__)
+
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    evento = find(lambda ev: ev.id == id, eventos)
+
+    return jsonify(evento.__dict__)

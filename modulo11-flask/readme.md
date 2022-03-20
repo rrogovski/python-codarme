@@ -91,3 +91,32 @@ def listar_eventos():
 
     return jsonify(eventos_dict)
 ```
+
+## Detalhar evento
+
+Vamos criar uma rota para acessar os detalher de um evento, para isso definos uma rota:
+
+```py
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    for ev in eventos:
+       if ev.id == id:
+           return jsonify(ev.__dict__)
+```
+Note que nessa rota temos essa sintaxe do _Flask_ `<int:id>`, que é um argumento que será informado na _URL_ do tipo inteiro e um nome, nesse caso `id`. E como temos esse parâmetro que é recebido pela _URL_, definimos uma função que irá receber esse parâmetro como argumento para assim detalhar os dados do evento com esse `id`.
+
+Para esse exemplo refarotei para usar uma expressão _lambda_ apenas para aprendizem:
+
+```py
+find = lambda func, elements: next((element for element in elements if func(element)), None)
+findall = lambda func, elements: [element for element in elements if func(element)]
+
+@app.route("/api/eventos/<int:id>/")
+def detalhar_evento(id):
+    evento = find(lambda ev: ev.id == id, eventos)
+
+    return jsonify(evento.__dict__)
+```
+
+
+[Para saber mais sobre _lambda_](https://docs.python.org/3.8/library/types.html?highlight=lambda#types.LambdaType)
