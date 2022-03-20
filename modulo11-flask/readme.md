@@ -254,5 +254,20 @@ def criar_evento():
         evento = EventoOnline(nome=nome)
 
     eventos.append(evento)
-    return data
+    
+    return {
+        "id": evento.id,
+        "url": f"/api/eventos/{evento.id}"
+    }
+```
+E também um novo `@app.errorhandler` para _Bad Request_, assim teremos dois manipulaores de erro:
+
+```py
+@app.errorhandler(HTTPStatus.NOT_FOUND)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
+
+@app.errorhandler(HTTPStatus.BAD_REQUEST)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.BAD_REQUEST)
 ```

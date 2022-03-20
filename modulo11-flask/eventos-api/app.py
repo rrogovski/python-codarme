@@ -5,7 +5,7 @@ from evento import Evento
 from evento_online import EventoOnline
 
 app = Flask(__name__)
-app.config['TRAP_HTTP_EXCEPTIONS']=True
+# app.config['TRAP_HTTP_EXCEPTIONS']=True
 
 ev1 = Evento("Aula de Python")
 ev1.imprime_informacaoes()
@@ -43,20 +43,25 @@ def listar_eventos():
 #         if ev.id == id:
 #             return jsonify(ev.__dict__)
 
-# @app.errorhandler(HTTPStatus.NOT_FOUND)
-# def not_found(error_msg):
-#     return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
+@app.errorhandler(HTTPStatus.NOT_FOUND)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
 
-@app.errorhandler(Exception)
-def handle_error(e, error_msg):
-    try:
-        if e.code == HTTPStatus.NOT_FOUND:
-            return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
-        elif e.code == HTTPStatus.BAD_REQUEST:
-            return (jsonify(error=str(error_msg)), HTTPStatus.BAD_REQUEST)
-        raise e
-    except:
-        return (jsonify(error="Something went wrong"), HTTPStatus.INTERNAL_SERVER_ERROR)
+@app.errorhandler(HTTPStatus.BAD_REQUEST)
+def not_found(error_msg):
+    return (jsonify(error=str(error_msg)), HTTPStatus.BAD_REQUEST)
+
+# @app.errorhandler(Exception)
+# def handle_error(e):
+#     try:
+#         error_msg = "teste"
+#         if e.code == HTTPStatus.NOT_FOUND:
+#             return (jsonify(error=str(error_msg)), HTTPStatus.NOT_FOUND)
+#         elif e.code == HTTPStatus.BAD_REQUEST:
+#             return (jsonify(error=str(error_msg)), HTTPStatus.BAD_REQUEST)
+#         raise e
+#     except:
+#         return (jsonify(error="Something went wrong"), HTTPStatus.INTERNAL_SERVER_ERROR)
 
 @app.route("/api/eventos/<int:id>/")
 def detalhar_evento(id):
@@ -86,4 +91,8 @@ def criar_evento():
         evento = EventoOnline(nome=nome)
 
     eventos.append(evento)
-    return data
+    
+    return {
+        "id": evento.id,
+        "url": f"/api/eventos/{evento.id}"
+    }
