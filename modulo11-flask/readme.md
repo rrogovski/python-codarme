@@ -274,7 +274,7 @@ def not_found(error_msg):
 
 ## Deletar evento
 
-Para deletar um evento, precisamos definir uma rota para o método _DELETE_, que assim como o _POST_ recebe o id do recuso que desejamos excluir:
+Para deletar um evento, precisamos definir uma rota para o método _DELETE_, que assim como o _GET_ recebe o id do recuso que desejamos excluir:
 
 ```py
 @app.route("/api/eventos/<int:id>", methods=["DELETE"])
@@ -293,4 +293,62 @@ def deletar_evento(id):
         })
     except AttributeError:
         abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+```
+
+## Editar um evento - _PUT_
+
+Para editar um evento/recurso precisamos de uma rota para o método _PUT_, de forma muito parecida com o _POST_, pois iremos enviar os dados que serão atualizados na requisição, mas precisamos informar o `id` assim como no _DELETE_:
+
+```py
+@app.route("/api/eventos/<int:id>", methods=["PUT"])
+def editar_evento(id):
+    data = request.get_json()
+    nome = data.get("nome")
+    local = data.get("local")
+
+    if not nome:
+        abort(HTTPStatus.BAD_REQUEST, "Property 'nome' is required!")
+        
+    if not local:
+        abort(HTTPStatus.BAD_REQUEST, "Property 'local' is required!")
+
+    evento = find(lambda ev: ev.id == id, eventos)
+    
+    if not evento:
+        abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+        
+    evento.nome = nome
+    evento.local = local
+    
+    return jsonify(evento.__dict__)
+```
+
+## Editar um evento parcialmente - _PATCH_
+
+O verbos/métodos _PUT_ e _PATCH_ tem a mesma finalidade de editar/atualizar um recuso. Mas a diferença entre eles é que enquanto o _PUT_ precisa de todas os atributos do recurso que será atualizado, o _PATCH_ precisa apenas dos atributo(s) que irão ser atualizados nessa requisição, por isso uma atualização parcial.
+
+```py
+@app.route("/api/eventos/<int:id>", methods=["PATCH"])
+def editar_evento_parcial(id):
+    data = request.get_json()
+    # {} => não atualiza nada
+    # { "nome":"" } => não pode por conta da regra de negócio
+    # { "nome": "Novo nome" } => atualizar o nome
+    
+    if not "nome" in data.keys():
+        abort(HTTPStatus.BAD_REQUEST, "Property 'nome' is required!")
+
+    nome = data.get("nome")
+
+    if not nome:
+        abort(HTTPStatus.BAD_REQUEST, "Property 'nome' is required!")
+
+    evento = find(lambda ev: ev.id == id, eventos)
+
+    if not evento:
+        abort(HTTPStatus.NOT_FOUND, f"Event id {id} not found!")
+    
+    evento.nome = nome
+    
+    return jsonify(evento.__dict__)        
 ```
