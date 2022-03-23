@@ -1,0 +1,37 @@
+version: "3.9"
+  
+services:
+  db:
+    image: postgres:13
+    # command: 
+    #   - /bin/chown
+    #   - -R
+    #   - "2030"
+    #   - /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    # user: 1000:1000
+    user: postgres
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      # - PGDATA=/var/lib/postgresql/data/pgdata
+      # - POSTGRES_HOST_AUTH_METHOD=trust
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    links:
+      - db:db
+    depends_on:
+      - db

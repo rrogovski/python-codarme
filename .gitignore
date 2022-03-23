@@ -1,3 +1,4 @@
 _pycache_/
 */**/*.pyc
 venv/
+*/**/*.sqlite3
