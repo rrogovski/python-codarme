@@ -100,3 +100,55 @@ urlpatterns = [
     path('', include(agenda_urls))
 ]
 ```
+
+## Exibindo Eventos
+
+Para conseguirmos mostrar um evento, precisaremos definir um modelo(_model_), para a entidade evento. Note que no diretório `agenda`, temos um arquivo `models.py`, é nele que iremos definir os modelos de entidades que teremos na aplicação da agenda, vamos definir esse modelo e criar algumas instâncias:
+
+```py
+from django.db import models
+
+# Create your models here.
+class Evento:
+    def __init__(self, nome, categoria, local=None, link=None):
+        self.nome = nome
+        self.categoria = categoria
+        self.local = local
+        self.link = link
+        
+aula_python = Evento("Aula de Python", "Back-end", "Sinop")
+aula_js = Evento("Aula de Javascript", "Fullstack", link="https://rogovski.dev")
+
+eventos = [
+    aula_python,
+    aula_js
+]
+```
+E para que o usuário possa ver esses dados no navegador, vamos criar mais _view_ na aplicação da agenda:
+
+```py
+def exibir_evento(request):
+    evento = eventos[0]
+    
+    return HttpResponse(f""""
+        <html>
+        <h1>Evento: {evento.nome}</h1>
+        <p>Categoria: {evento.categoria}</p>
+        <p>Local: {evento.local}</p>
+        <p>Link: <a href='{evento.link} target='_blank'>Acessar</a></p>
+        </html>
+    """)
+```
+* Note que usamos `"""` três vezes, para abrir e fechar as _strings_, isso é chamado de _multiline strings_, assim podemos ter quebras de linhas no texto que o _Python_ identifica como parte do conteúdo. Além disso incluímos o `f` (_f strings_) para podermos fazer a interpolação do dados que queremos apresentar na _view_.
+Feito isso, vamos nas _URLs_ da aplicação agenda para incluir o _path_ para essa _view_:
+
+```py
+from django.urls import path
+
+from agenda.views import exibir_evento, index
+
+urlpatterns = [
+    path('', index),
+    path('evento', exibir_evento)
+]
+```
