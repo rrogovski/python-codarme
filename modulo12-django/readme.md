@@ -207,7 +207,7 @@ class AgendaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'agenda'
 ```
-Esse fluxo acontece da siguinte forma:
+Esse fluxo acontece da seguinte forma:
 
 ![Django](./img/03.png "Django")
 
