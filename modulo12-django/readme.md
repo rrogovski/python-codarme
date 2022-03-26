@@ -152,3 +152,83 @@ urlpatterns = [
     path('evento', exibir_evento)
 ]
 ```
+
+## Utilizando _Django_ template
+
+Não é uma boa prática mistrar o seu código _HTML_ com o seu código _python_. O idel é extrair isso para um arquivo separaddo. E para isso, no _Django_ usamos o _Django Templates_. Para fazer usso dos _templates_, vamos no diretório da nossa aplicação `agenda` e criamos a estrutra de diretórios `templates\agenda`.
+
+![Django](./img/02.png "Django")
+
+Agora vamos copiara a _string_ que declaramos anteriormente na `views.py` em `exibir_evento` e levar para o nosso _template_. E teremos que fazer alguns ajustes para que o _Django_ faça a interpolação das variáveis que passarmos para esse _template_, onde antes tinahmos as variáveis envolvidas por `{ evento.nome }`, agora temos `{{ evento.nome }}`, por exemplo:
+
+```html
+<html>
+    <h1>Evento: {{ evento.nome }}</h1>
+    <p>Categoria: {{ evento.categoria }}</p>
+    <p>Local: {{ evento.local }}</p>
+    <p>Link: <a href='{{ evento.link }}' target='_blank'>Acessar</a></p>
+</html>
+```
+E agora passar informar para a nossa função `exibir_evento` utilizar esse arquivo _html_:
+
+```py
+def exibir_evento(request):
+    evento = eventos[1]
+    template = loader.get_template("agenda/exibir_evento.html")
+    rendered_template = template.render(context={ "evento": evento }, request=request)
+    
+    return HttpResponse(rendered_template)
+```
+
+Perceba que tiver que fazer o _import_ `from django.template import loader` para utilizar uma função que carrega o _template_ que desejamos usar, `template = loader.get_template("agenda/exibir_evento.html")`.
+
+Normalmente o _Django_ espera que dentro do diretório de cada aplicação, no nosso caso a `agenda` tenho um diretório `templates`, então para isso criamos um subdirtetório `agenda` para que o _Django_ saiba de qual aplicação ele deve buscar o _template_.
+
+Na função `render`, informamos como parâmetros, o contexto que iremos passar para o template e a requisição. No caso do contexto é um objeto que tem uma propriedade justamente com o nome que é usado para fazer a interpolação.
+
+Mas se tentar acessar essa rota agora, teremos um erro `TemplateDoesNotExist at /evento`, pois o _Django_ necessita de um configuração para informar quais aplicações estão instaladas. Isso é feito no arquivo `settings.py` no diretório do projeto `vamomarcar` e adidionamos a linha `'agenda.apps.AgendaConfig',`:
+
+```py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'agenda.apps.AgendaConfig',
+]
+```
+
+`AgendaConfig` é uma classe que fica no arquivo `agenda/apps.py`:
+
+```py
+class AgendaConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'agenda'
+```
+Esse fluxo acontece da siguinte forma:
+
+![Django](./img/03.png "Django")
+
+Por ser algo que aconte com frequência no _Django_ podemos os _shortcuts_ que vem do _import_ `from django.shortcuts import render` para reduzir o nosso código:
+
+```py
+def exibir_evento(request):
+    evento = eventos[1]
+    
+    return render(request=request, context={ "evento": evento }, template_name="agenda/exibir_evento.html")
+```
+O _template engine_ do _Django_ também permite o usa de algumas lógicas simples de código. Por exemplo, se uma variável estiver sem valor(`None`, o `null` do _Python_), podemos tratar para mostar ou não essa informação:
+
+```html
+<html>
+    <h1>Evento: {{ evento.nome }}</h1>
+    <p>Categoria: {{ evento.categoria }}</p>
+    {% if evento.local %}<p>Local: {{ evento.local }}</p>{% endif %}
+    {% if evento.link %}<p>Link: <a href="{{ evento.link }}" target="_blank">Acessar</a></p>{% endif %}
+</html>
+
+```
+
+[Para saber mais sobre _templates_.](https://docs.djangoproject.com/en/4.0/topics/templates/)
