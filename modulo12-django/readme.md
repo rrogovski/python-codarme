@@ -302,3 +302,131 @@ python manage.py dbshell
 Assim podemos inspecionar esse banco, como no caso é o _sqlite_, usamos o comando `.tables` para listar nossas tabelas:
 
 ![Django](./img/08.png "Django")
+
+## Fazendo consultas pelo shell
+
+Para acessar o _shell_ do _Django_, usamos:
+
+```py
+python manage.py shell
+```
+
+feito isso, acessaremos um terminal _python_:
+
+![Django](./img/09.png "Django")
+
+Do qual podemos criar registros de nossas entidades no banco de dados.
+
+Importar as nossas entidades:
+
+```py
+from agenda.models import Evento, Categoria
+```
+Criar uma entidade no banco de dados:
+
+```py
+Categoria.objects.create(nome="Back-end")
+```
+Listar todas as entidades criadas:
+
+```py
+Categoria.objects.all()
+```
+Criar um registro no banco de dados e armazenar em uma variável:
+
+```py
+categoria = Categoria.objects.create(nome="Front-end")
+```
+
+Imprir o valor de uma propriedade da variável que foir armazenda:
+
+```py
+categoria.nome
+```
+
+Agora de se acessarmos o nosso cliente de banco de dados pelo comando:
+
+```sh
+python manage.py dbshell
+```
+E fizermos consultas em _SQL_ puro, podemos ver os registros criados:
+
+```sh
+.headers ON
+select * from agenda_categoria;
+```
+
+A opção `.headers ON` habilita o nome das colunas das tabelas:
+
+![Django](./img/10.png "Django")
+
+Ou melhor ainda, crie um arquivo em `~/.sqliterc`:
+
+```sh
+.mode column
+.headers on
+.separator ROW "\n"
+.nullvalue NULL
+.timer on
+.changes on
+```
+
+Assim toda vez que acessar o _CLI_ do _sqlite_ o _output_ será um pouco _prittier_. 😁
+
+Perceba então, que temos duas formas de fazer consulta ao nosso banco de dados, pelo _Django ORM_ ou pelo _dbshell_ que se conecta com o cliente do banco de dados.
+
+Outro exemplo para persistir dados no nosso banco de dados usando o _Django ORM_ é criando novas intâncias e memória para depois persistir no banco de dados:
+
+```sh
+python manage.py shell
+```
+```py
+from agenda.models import Evento, Categoria
+categoria3 = Categoria(nome="Fullstack)
+categoria3.save()
+```
+
+Como a nossa classe `Categoria` uma extensão de `models.Model`, ela herda vários atributos e métodos são herdados também. Um deles é o `save()`, que persiste no banco de dados a instância que criamos em memória.
+
+Também podemos fazer consultas filtrando nossos valores, equivalente ao `where` do _SQL_:
+
+```py
+evento = Evento(nome="Aula de Django ORM", categoria="Back-end")
+```
+
+![Django](./img/11.png "Django")
+
+```py
+Categoria.objects.filter(nome='Back-end')
+Categoria.objects.filter(nome__contains='end')
+```
+
+```py
+evento = Evento(nome="Aula de Django ORM", categoria="Back-end")
+```
+Note que tentar ciar um evento, com a categoria sendo uma `string`, teremos um erro, dizendo que `Evento.categoria` deve ser uma instância de `Categoria`.
+
+![Django](./img/12.png "Django")
+
+O correto é referenciarmos um instância de `Categoria` para `Evento.categoria`, para isso vamos buscar do banco de dados um categoria pelo seu `id` e para criar uma nova instância e usá-la para o novo evento:
+
+```py
+categoria_backend = Categoria.objects.get(id=1)
+evento = Evento(nome="Aula de Django ORM", categoria=categoria_backend)
+evento.save()
+```
+Lembrando que o atribuito `id` é herdado de `models.Model`.
+
+Agora podemos acessar também atributos de uma entidade que é referenciada em outra:
+
+```py
+evento.categoria.nome
+```
+E também fazermos consultar mais personalizadas:
+
+```py
+Evento.objects.filter(categoria=categoria_backend)
+Evento.objects.filter(categoria__nome="Back-end")
+```
+
+[Para saber mais sobre _queries_](https://docs.djangoproject.com/pt-br/4.0/topics/db/queries/)
