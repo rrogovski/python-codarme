@@ -371,7 +371,7 @@ Ou melhor ainda, crie um arquivo em `~/.sqliterc`:
 .changes on
 ```
 
-Assim toda vez que acessar o _CLI_ do _sqlite_ o _output_ será um pouco _prittier_. 😁
+Assim toda vez que acessar o _CLI_ do _sqlite_ o _output_ será um pouco _prettier_. 😁
 
 Perceba então, que temos duas formas de fazer consulta ao nosso banco de dados, pelo _Django ORM_ ou pelo _dbshell_ que se conecta com o cliente do banco de dados.
 
