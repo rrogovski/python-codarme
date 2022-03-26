@@ -430,3 +430,49 @@ Evento.objects.filter(categoria__nome="Back-end")
 ```
 
 [Para saber mais sobre _queries_](https://docs.djangoproject.com/pt-br/4.0/topics/db/queries/)
+
+## _Django Admin_
+
+O _Django_ dispõe de um painel administrativo, chamdo _Django Admin_. Para utilizá-lo precisamos ir no diretório do nosso projeto  no arquivo `urls.py`e deixar o _path_ para a rota _admin_ habilitada:
+
+```py
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include(agenda_urls))
+]
+```
+
+Feito isso ao acessar http://localhost:8000/admin, iremos para uma tela de _login_. Porém ainda não temos um usuário e senha criados para acessar essa aplicação.
+
+Para isso precisamos usar uma outra funcionalidade do `manage.py`, o `createsuperuser`:
+
+```sh
+python manage.py createsuperuser
+```
+
+Que ira solicitar o nome do usuário, endereço de e-mail e a senha. Caso seja uma senha fraca, o _Django_ solicita uma confirmação para continuar.
+
+![Django](./img/13.png "Django")
+
+Feito isso podemos fazer o _log in_ para acessar o painel administrativo do _Django_.
+
+Ao acessar veremos duas tabelas, que já são criadas por padrão em projetos _Django_, a `Groups` e `Users`.
+
+Se clicarmos em `Users` temos os dados que existem nessa tabela. E o nosso usuário, que acabos de criar está lá, como _super user_ que pode ser conferido pela própriedade _STAFF STATUS_.
+
+Para que nossas entites no _Admin_ precisamos registrar essas classes na administração do _Django_. Isso pode ser feito no diretório da nossa aplicação `agenda` no arquivo `admin.py`:
+
+```py
+from django.contrib import admin
+
+from agenda.models import Categoria, Evento
+
+# Register your models here.
+admin.site.register(Evento)
+admin.site.register(Categoria)
+```
+
+Agora ao atualizarmos o painel de administração teremos acesso a essas tabelas. Assim temos uma _CRUD_ para acessar nossos dados.
+
+Note que algumas informações são apresentadas como `Evento object(1)` ou `Categoria object(1)`, por conta da método `__str__` que tentar converter nosso objeto para uma `string`, para isso podemos sobreescrever esse método para:
+
