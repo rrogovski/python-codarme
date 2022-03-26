@@ -232,3 +232,73 @@ O _template engine_ do _Django_ também permite o usa de algumas lógicas simple
 ```
 
 [Para saber mais sobre _templates_.](https://docs.djangoproject.com/en/4.0/topics/templates/)
+
+## _Django ORM_ e migrações
+
+### Mapeando as entidades
+
+Vamos começar usando o _sqlite_ como banco de dados e depois vamos migrar nossos dados para um _Postgres_. 
+
+Perceba que na raiz do nosso projeto, temos um arquivo chamado `db.sqlite3`, que é onde o _sqlite_ irá salvar nossos dados.
+
+![Django](./img/04.png "Django")
+
+E para saber qual banco de dados nosso projeto, está usando, podemos ver isso em `vamomarcar/settings.py`:
+
+![Django](./img/05.png "Django")
+
+Para fazer a inserção de dados nesse banco de dados, poderiamos fazer isso de maneira manual. Mas o _Django ORM_ que faz o mapeamentos de nossas entidades e seus atributos.
+
+Para isso precisamos refatorar um pouco o nosso código e fazer com que nossas classes herdem de `models.Model` do _Django_:
+
+```py
+class Categoria(models.Model):
+    nome: models.CharField(max_length=256, unique=True)
+
+class Evento(models.Model):
+    nome = models.CharField(max_length=256)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    local = models.CharField(max_length=256, blank=True)
+    link = models.CharField(max_length=256, blank=True)
+```
+
+Nessa refatoração, criamos uma nova entidade, a classe `Categoria` que herda de `models.Model`, assim como a `Evento`. Agora passamos a usar as funcionalidades do _Django ORM_ para mapear nossos atritubos, informandos os tipos deles e algumas propriedade como, o tamanho máximo, se esse campo é uma _PK_(_Primary Key_) do nosso banco de dados, assim não aceita registros duplicados, como no caso de `nome: models.CharField(max_length=256, unique=True)`.
+
+E também fizemos um relacionamento de `Eventos` com `Categoria`, `categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)`, informando quand a entidade é a `ForeignKey` e o que deve ser feito ao deletar um registro de `Categoria`, da qual `Evento` tenha um relacionamento. Assim ao deletar um registro em `Categoria` e o mesmo tenha uma relação como `Evento`, o valor passará a ser `null`, pois informamos que esse atributo pode ser `null` em `null=True`.
+
+[Para saber mais sobre _models_.](https://docs.djangoproject.com/pt-br/4.0/topics/db/models/)
+
+### Migrações
+
+Todo processo de alteração em um banco de dados, é feito em duas etapas no _Django_, primeiro declaramos em código qual é a sua estrutura, as tabelas represntadas pelas entidades, e colunas representadas pelos atributos dessas entidades.
+
+Feito os mapeados podemos usar as migrações(_Migrations_) do _Django_ para criar a tabelas em nosso banco de dados:
+
+```sh
+python manage.py makemigrations
+```
+Feito isso o _Django_ criará um arquivo em `agenda/migrations/0001_initiial_py`:
+
+![Django](./img/06.png "Django")
+
+Esse arquivo é como a versão do nosso banco de dados. Que contém a estrutura das nossas mudanças no banco de dados. Conforme vamos fazendo alteraçõe no nosso banco de dados, o _Django_ gerar arquivos de migração de forma sequencial, de modo que mantemos um histórico das alterações que foram feitas no nosso banco de dados, também conseguirmos voltar no "tempo" para uma terminada "versão" que o banco de dados estava.
+
+Depois de geradas essas mudanças, podemos aplicá-las em nosso banco de dados:
+
+```sh
+python manage.py migrate
+```
+
+Isso gera outras `migrations` que um projeto _Django_ também precisa, e junto delas está a nossa `migration`:
+
+![Django](./img/07.png "Django")
+
+Feito isso, podemos conectar no nosso cliente de banco de dados por uma ferramenta do próprio _Django_:
+
+```sh
+python manage.py dbshell
+```
+
+Assim podemos inspecionar esse banco, como no caso é o _sqlite_, usamos o comando `.tables` para listar nossas tabelas:
+
+![Django](./img/08.png "Django")

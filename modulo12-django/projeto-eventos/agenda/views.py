@@ -2,14 +2,16 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 
-from agenda.models import eventos
-
 # Create your views here.
 def index(request):
     return HttpResponse("Oláááá Enfermeira!")
 
 def exibir_evento(request):
-    evento = eventos[1]
+    evento = {
+        "nome": "Aula teste",
+        "categoria": "Categoria teste",
+        "local": "Local teste"
+    }
     # template = loader.get_template("agenda/exibir_evento.html")
     # rendered_template = template.render(context={ "evento": evento }, request=request)
     
