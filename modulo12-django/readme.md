@@ -476,3 +476,95 @@ Agora ao atualizarmos o painel de administração teremos acesso a essas tabelas
 
 Note que algumas informações são apresentadas como `Evento object(1)` ou `Categoria object(1)`, por conta da método `__str__` que tentar converter nosso objeto para uma `string`, para isso podemos sobreescrever esse método para:
 
+## Listagem de eventos
+
+No nosso arquivo `agenda/urls.py`, vamos alterar o `path("", index)` para uma _view_ que traga a listagem de nossos eventos, vamos renomear `index` para `listar_eventos` com o `F2`, assim renomeamos também todas as suas referências.
+
+```py
+urlpatterns = [
+    path('', listar_eventos),
+    path('evento', exibir_evento)
+]
+```
+E também faremos alterações na nossa _view_ de listagem:
+
+```py
+def listar_eventos(request):
+    eventos = Evento.objects.all()
+
+    for evento in eventos:
+      evento.random = '{:0>3}'.format(randrange(1, 120))
+
+    return render(
+        request=request, 
+        context={ "eventos": eventos, 'get_random': get_random }, 
+        template_name="agenda/listar_eventos.html"
+    )
+```
+
+E por último o nosso _template_:
+
+```html
+{% load tailwind_tags %}
+<!DOCTYPE html>
+<html>
+  {% tailwind_css %}
+
+<div class="container my-24 px-6 mx-auto">
+
+    <section class="mb-32 text-gray-800 text-center">
+  
+      <h2 class="text-3xl font-bold mb-12 pb-4 text-center">Últimos Eventos</h2>
+  
+      <div class="grid lg:grid-cols-3 gap-6 xl:gap-x-12">
+
+        {% for evento in eventos %}
+  
+        <div class="mb-0">
+          <div class="relative block bg-white rounded-lg shadow-lg">
+            <div class="flex">
+              <div
+                class="relative overflow-hidden bg-no-repeat bg-cover relative overflow-hidden bg-no-repeat bg-cover shadow-lg rounded-lg mx-4 -mt-4"
+                data-mdb-ripple="true" data-mdb-ripple-color="light">
+                <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/{{ evento.random }}.webp" class="w-full" />
+                <a href="#!">
+                  <div
+                    class="absolute top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-fixed opacity-0 hover:opacity-100 transition duration-300 ease-in-out"
+                    style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                </a>
+              </div>
+            </div>
+            <div class="p-6">
+              <h5 class="font-bold text-lg mb-3">{{ evento.nome }}</h5>
+              <p class="text-gray-500 mb-4">
+                <small>Published <u>{% now 'd/m/Y H:i' %}</u> by
+                  <a href="" class="text-gray-900">Rodrigo Rogovski</a></small>
+              </p>
+              <p class="mb-4 pb-2">
+                {{ evento.categoria.nome }}
+              </p>
+              <p class="text-gray-900 mb-4 pb-2">
+                <small>
+                  Local: {% firstof evento.local evento.link 'A definir' %}
+                </small>
+              </p>
+              <a href="#!" data-mdb-ripple="true" data-mdb-ripple-color="light"
+                class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Saiba mais</a>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+
+      </div>
+  
+    </section>
+  
+  </div>
+
+</html>
+```
+### Extra: _TailwindCSS_
+
+Para incluir o _TailwindCSS_ no projeto _Django_ [veja aqui](https://django-tailwind.readthedocs.io/en/latest/installation.html)
+
