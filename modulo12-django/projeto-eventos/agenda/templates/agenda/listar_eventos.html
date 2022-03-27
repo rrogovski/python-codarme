@@ -11,7 +11,7 @@
   
       <h2 class="text-3xl font-bold mb-12 pb-4 text-center">Últimos Eventos</h2>
   
-      <div class="grid lg:grid-cols-3 gap-6 xl:gap-x-12">
+      <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
 
         {% for evento in eventos %}
   
@@ -32,7 +32,13 @@
             <div class="p-6">
               <h5 class="font-bold text-lg mb-3">{{ evento.nome }}</h5>
               <p class="text-gray-500 mb-4">
-                <small>Published <u>{% now 'd/m/Y H:i' %}</u> by
+                <small>Released <u>
+                  {% if evento.data %}
+                    {{ evento.data | date:'d/m/Y' }}
+                  {% else %}
+                    a definir
+                  {% endif %}
+                  </u> by
                   <a href="" class="text-gray-900">Rodrigo Rogovski</a></small>
               </p>
               <p class="mb-4 pb-2">

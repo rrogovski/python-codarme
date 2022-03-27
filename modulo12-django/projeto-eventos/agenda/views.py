@@ -1,3 +1,4 @@
+from datetime import date
 from random import randrange
 from django.http.response import HttpResponse
 from django.shortcuts import render
@@ -7,7 +8,7 @@ from agenda.models import Evento
 
 # Create your views here.
 def listar_eventos(request):
-    eventos = Evento.objects.all()
+    eventos = Evento.objects.filter(data__gte=date.today()).order_by('data')
     # get_random =  str(range(100)).zfill(3)
     # get_random = '%03d' % range(100)
     
