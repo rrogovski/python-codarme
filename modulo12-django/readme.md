@@ -655,3 +655,19 @@ Perceba que também fizemos um ordenação por data crescente. Caso queria a ord
 ```py
 eventos = Evento.objects.filter(data__gte=date.today()).order_by('data').reverse()
 ```
+
+## Buscando e exibindo evento
+
+Agora fazar a _view_ que trará o detalhe de um evento. Para isso vamos começar alterando a nossas _URLs_ da `agenda`:
+
+```py
+urlpatterns = [
+    path('', listar_eventos),
+    path('eventos/<int:id>', exibir_evento)
+]
+```
+
+A rota que leva para o detalhe de um evento, recebe como parâmetro um `id`, que defininos ser parte da _URL_ e informando o tipo, `<int:id>`.
+
+Agora podemos recuperar esse `id` na função que irá receber a requisição dessa rota em `views.py` da `agenda`:
+

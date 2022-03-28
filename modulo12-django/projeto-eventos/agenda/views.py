@@ -22,16 +22,8 @@ def listar_eventos(request):
         template_name="agenda/listar_eventos.html"
     )
 
-def exibir_evento(request):
-    evento = {
-        "nome": "Aula teste",
-        "categoria": "Categoria teste",
-        "local": "Local teste"
-    }
-    # template = loader.get_template("agenda/exibir_evento.html")
-    # rendered_template = template.render(context={ "evento": evento }, request=request)
-    
-    # return HttpResponse(rendered_template)
+def exibir_evento(request, id):
+    evento = Evento.objects.get(id=id)
     
     return render(
         request=request, 
