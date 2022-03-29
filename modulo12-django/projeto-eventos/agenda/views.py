@@ -1,7 +1,7 @@
 from datetime import date
 from random import randrange
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
 from agenda.models import Evento
@@ -23,7 +23,7 @@ def listar_eventos(request):
     )
 
 def exibir_evento(request, id):
-    evento = Evento.objects.get(id=id)
+    evento = get_object_or_404(Evento, id=id)
     
     return render(
         request=request, 

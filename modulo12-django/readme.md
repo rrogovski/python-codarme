@@ -671,3 +671,26 @@ A rota que leva para o detalhe de um evento, recebe como parâmetro um `id`, que
 
 Agora podemos recuperar esse `id` na função que irá receber a requisição dessa rota em `views.py` da `agenda`:
 
+```py
+def exibir_evento(request, id):
+    evento = Evento.objects.get(id=id)
+    
+    return render(
+        request=request, 
+        context={ "evento": evento }, 
+        template_name="agenda/exibir_evento.html"
+    )
+```
+
+E vamos também fazer uma tratativa para quando tentarmos acessar um recurso que não exista, levendo para uma página de erro 404. Para isso vamos importar `get_objects_or_404` de `django.shortcuts`. E agora alteramos nossa função `exibir_evento`:
+
+```py
+def exibir_evento(request, id):
+    evento = get_object_or_404(Evento, id=id)
+    
+    return render(
+        request=request, 
+        context={ "evento": evento }, 
+        template_name="agenda/exibir_evento.html"
+    )
+```
