@@ -884,13 +884,19 @@
                 style="color: hsl(218, 81%, 95%)"
               >
                 Are you ready <br /><span style="color: hsl(218, 81%, 75%)"
-                  >for an adventure?</span
+                  >{{ evento.nome }}</span
                 >
               </h1>
               <p class="text-lg" style="color: hsl(218, 81%, 95%)">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
-                officia consequatur adipisci tenetur repudiandae rerum quos.
+                Local: {% firstof evento.local evento.link 'A definir' %}
               </p>
+              <small style="color: hsl(218, 81%, 75%)">
+                {% if evento.data %}
+                  {{ evento.data | date:'d/m/Y' }}
+                {% else %}
+                  a definir
+                {% endif %}
+              </small>
             </div>
             <div class="mb-12 lg:mb-0">
               <div
