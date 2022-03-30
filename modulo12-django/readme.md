@@ -694,3 +694,28 @@ def exibir_evento(request, id):
         template_name="agenda/exibir_evento.html"
     )
 ```
+
+## Navegando entre páginas da aplicação
+
+Para isso vamos alterar o nosso _template_ e incluir o _link_ na _tag_ `a` no atribudo `href=""`:
+
+```html
+<a href="/eventos/{{ evento.id }}">Saiba Mais</a>
+```
+
+Mas o _Django_ tem uma funcionalidade quer permiti fazermos de outra forma:
+
+```html
+<a href="{% url 'exibir_evento' evento.id %}">Saiba Mais</a>
+```
+
+Mas par que isso funcione precisamos alterar as _URLs_ da `agenda` e registrar um nome para cada rota:
+
+```py
+urlpatterns = [
+    path('', listar_eventos, name="listar_eventos"),
+    path('eventos/<int:id>', exibir_evento, name="exibir_evento")
+]
+```
+
+Assim, mesmo que eu mude a _URL_ na nossa aplicação, mas mantemos o nome, a navegação continua funcionando.
