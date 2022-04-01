@@ -719,3 +719,43 @@ urlpatterns = [
 ```
 
 Assim, mesmo que eu mude a _URL_ na nossa aplicação, mas mantemos o nome, a navegação continua funcionando.
+
+## Enviado um formulário
+
+Primeiro vamos alterar nosso modelo para receber os dados de participates, que nesse caso será uma lista de e-mails, no caso participantes:
+
+```py
+class Categoria(models.Model):
+    nome = models.CharField(max_length=256, unique=True)
+    
+    def __str__(self):
+        return f"{self.id} - {self.nome}"
+
+class Participante(models.Model):
+    email = models.CharField(max_length=256)
+    
+    def __str__(self):
+        return f"{self.id} - {self.email}" 
+class Evento(models.Model):
+    nome = models.CharField(max_length=256)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    local = models.CharField(max_length=256, blank=True)
+    link = models.CharField(max_length=256, blank=True)
+    data = models.DateField(null=True)
+    participantes = models.ManyToManyField(Participante, through='EventoParticipante')
+    
+    def __str__(self):
+        return f"{self.id} - {self.nome}"    
+class EventoParticipante(models.Model):
+    participante = models.ForeignKey(Participante, on_delete=models.CASCADE)
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.id} - {self.evento.nome} | {self.participante.email}"
+```
+
+Agora temos uma classe que reprenta os participantes e mais uma classe para funcionar como a tabela pivô para o relacionamento de evento com participantes, pois um evento pode ter vários participantes.
+
+[Para saber mais sobre relacionamentos no _Django_.](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ManyToManyField)
+
+Agora vamos preparar nosso formulário

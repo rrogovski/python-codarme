@@ -13,7 +13,7 @@ def listar_eventos(request):
     # get_random = '%03d' % range(100)
     
     for evento in eventos:
-      evento.random = '{:0>3}'.format(randrange(1, 120))
+        evento.random = '{:0>3}'.format(randrange(1, 120))
     
     get_random = '{:0>3}'.format(randrange(120))
     return render(
