@@ -20,6 +20,9 @@ class Evento(models.Model):
     data = models.DateField(null=True)
     participantes = models.ManyToManyField(Participante, through='EventoParticipante')
     
+    def total_participantes(self):
+        self.participantes.count()
+    
     def __str__(self):
         return f"{self.id} - {self.nome}"    
 class EventoParticipante(models.Model):

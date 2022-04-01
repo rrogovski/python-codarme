@@ -1,10 +1,11 @@
 from datetime import date
 from random import randrange
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
-from agenda.models import Evento
+from agenda.models import Evento, EventoParticipante, Participante
 
 # Create your views here.
 def listar_eventos(request):
@@ -24,9 +25,23 @@ def listar_eventos(request):
 
 def exibir_evento(request, id):
     evento = get_object_or_404(Evento, id=id)
+    participantes = EventoParticipante.objects.filter(evento=evento).count()
     
     return render(
         request=request, 
-        context={ "evento": evento }, 
+        context={ "evento": evento, "participantes": participantes }, 
         template_name="agenda/exibir_evento.html"
     )
+    
+def evento_participar(request):
+    evento_id = request.POST.get('evento-id')
+    email = request.POST.get('email')
+    print(f'evento_id => {evento_id}')
+    print(f'email => {email}')
+    evento = get_object_or_404(Evento, id=evento_id)
+    participante = Participante(email)
+    participante.save()
+    evento_participante = EventoParticipante(evento, participante)
+    evento_participante.save()
+        
+    return HttpResponseRedirect(f'/evento/{id}')
