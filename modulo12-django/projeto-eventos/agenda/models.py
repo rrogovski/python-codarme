@@ -3,13 +3,13 @@ from django.db import models
 # Create your models here.
 class Categoria(models.Model):
     nome = models.CharField(max_length=256, unique=True)
-    
+
     def __str__(self):
         return f"{self.id} - {self.nome}"
 
 class Participante(models.Model):
     email = models.CharField(max_length=256)
-    
+
     def __str__(self):
         return f"{self.id} - {self.email}" 
 class Evento(models.Model):
@@ -28,6 +28,6 @@ class Evento(models.Model):
 class EventoParticipante(models.Model):
     participante = models.ForeignKey(Participante, on_delete=models.CASCADE)
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return f"{self.id} - {self.evento.nome} | {self.participante.email}"

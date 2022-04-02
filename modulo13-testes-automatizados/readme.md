@@ -1,0 +1,186 @@
+# Escrevendo testes automatizados 
+
+## Escrendo nosso script de teste
+
+Poderiamos fazer nossos testes criando um arquivo `test_calculadora.py`, onde iria fazer os testes da funções do arquivo `calculadora.py`:
+
+```py
+from calculadora import somar
+
+# Teste soma de dois numeros inteiros
+if somar(2, 4) == 6:
+    print("PASS")
+else:
+    print("FAIL")
+
+# Teste soma de número com zero
+if somar(2, 0) == 2:
+    print("PASS")
+else:
+    print("FAIL")
+```
+E então executariamos nosso arquivo de testes:
+
+```sh
+python test_calculadora.py
+```
+
+Mas existem bibliotecas para testes em _Python_ que veremos a seguir.
+
+## Utilizando a biblioteca _unittest_
+
+Para usar a biblioteca _unittest_ fazemos o seu _import_, criar uma nova classe que herda de `unittest.TestCase`, assim teremos os nossos casos de teste nessa classe e para executar os testes declarados usamos o `unittest.main()`:
+
+```py
+from calculadora import somar, dividir
+import unittest
+
+class TestSomar(unittest.TestCase):
+    def test_soma_de_dois_numeros_inteiros(self):
+        soma = somar(2, 4)
+        self.assertEqual(soma, 6)
+
+    def test_soma_de_numero_com_zero(self):
+        self.assertEqual(somar(2, 0), 2)
+
+class TestDividir(unittest.TestCase):
+    def test_divide_numero_por_1_retorna_o_numero(self):
+        self.assertEqual(dividir(10, 1), 10)
+
+    def test_divide_por_zero_(self):
+        self.assertEqual(dividir(10, 0), "Não é um número")
+
+unittest.main()
+```
+## Desenvolvimento orientado à testes (TDD)
+
+Em suma é "escrever os testes antes da lógica". Para isso temos requisítos da aplicação a ser desenvolvida:
+
+```py
+from datetime import timedelta
+
+class Tarefa:
+    def __init__(self, titulo, descricao="", data=None, data_notificacao=None):
+        self.titulo = titulo
+        self.descricao = descricao
+        self.data = data
+        self.data_notificacao = data_notificacao
+        self.concluida = False
+
+    def concluir(self):
+        """
+        Define essa tarefa como concluida.
+        """
+        pass
+
+    def adicionar_descricao(self, descricao):
+        """
+        Adiciona uma descrição para a tarefa.
+        """
+        pass
+
+    def adiar_notificacao(self, minutos):
+        """
+        Adia a notificação em uma certa quantidade de minutos.
+
+        Notificacao: 25/02/2022, 14h30
+        adiar_notificacao(15)
+        => Notificacao: 25/02/2022, 14h45
+        """
+        pass
+
+    def atrasada(self):
+        """
+        Diz se tarefa está atrasada. Ou seja, data < hoje.
+        """
+        pass
+```
+
+Vamos começar escrevendo o teste para uma tarefa concluída, que no caso esperamos que esperamos que seu atributo `concluida` seja `True`, então escrevemos o nosso testes, que na primeria execução dá erro, para só depois implementarmos a lógica, então teremos em um arquivo `test_tarefa.py`:
+
+```py
+import unittest
+from datetime import datetime
+from tarefa import Tarefa
+
+class TestConcluir(unittest.TestCase):
+    def test_concluir_tarefa_altera_concluido_para_true(self):
+        tarefa = Tarefa("Estudar Python")
+        tarefa.concluir()
+        self.assertEqual(tarefa.concluida, True)
+
+unittest.main()
+```
+
+Ao executar teremos um erro, para solucionar esse problema, vamos implementar a função de `concluir`:
+
+```py
+def concluir(self):
+    """
+    Define essa tarefa como concluida.
+    """
+    self.concluida = True
+```
+
+E dentro do _case_ de testes de `concluir`, podemos ter outros testes:
+
+```py
+class TestConcluir(unittest.TestCase):
+    def test_concluir_tarefa_altera_concluido_para_true(self):
+        tarefa = Tarefa("Estudar Python")
+        tarefa.concluir()
+        self.assertEqual(tarefa.concluida, True)
+
+    def test_concluir_tarefa_concluida_mantem_concluida_como_true(self):
+        tarefa = Tarefa("Estudar Python")
+        tarefa.concluir()
+        self.assertEqual(tarefa.concluida, True)
+        # Concluir uma tarefa já concluida
+        tarefa.concluir()
+        self.assertEqual(tarefa.concluida, True)
+```
+
+## _Date_ e _Datetime_
+
+No _Python_ temos a biblioteca `datetime` para conseguirmos representar datas e _datetime_, para importamos:
+
+```py
+from datetime import date, datetime
+```
+
+Alguns exemplos de uso são:
+
+```py
+# retornar da date de hoje
+date.today()
+
+# retorna o dia
+date.today().day
+
+# retorna o mês
+date.today().month
+
+# retorna o ano
+date.today().year
+
+# também podemos usar um construtor para definir uma data
+data = date(2022, 4, 2) # ano, mês e dia
+
+# podemos fazer operações
+data == date.today()
+data > date.today()
+
+# e temo o datetime para representar o tempo quando envolve horas, minutos, segundo e milisegundos
+datetime.now() # retorna um objeto que tem ano, dia, mes, hora, minuto, segundo e milisegundos
+
+# e também podemos usar o seu contrutor para definir um momento específico
+agora = datetime.datetime(2022, 4, 2, 19) # perceba que posso ignorar alguns parâmetros, como hora, minuto, segundo e milisegundos. Ano, mês e dia são obrigatórios.
+
+antes = datetime.datetime(2022, 4, 2)
+
+# e também podemos fazer alguma operações
+antes < agora
+```
+
+## Testando com datetime
+
