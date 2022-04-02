@@ -758,4 +758,60 @@ Agora temos uma classe que reprenta os participantes e mais uma classe para func
 
 [Para saber mais sobre relacionamentos no _Django_.](https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ManyToManyField)
 
-Agora vamos preparar nosso formulário
+Agora vamos preparar nosso formulário com a _tag_ `form` e um `input` com o atributo `type="hidden"`, para enviar o nosso `id` do evento e outro `input` para o e-mail do participante e também o `crsf_token` do _Django_ por conta da segurança do _CSRF_:
+
+```html
+<form action="{% url 'evento_participar' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="evento-id" id="evento-id" value="{{ evento.id }}">
+            <div class="md:mt-5 md:flex flex-row">
+              <input
+                type="text"
+                id="email"
+                name="email"
+                class="form-control block w-full px-4 py-2 mb-2 md:mb-0 md:mr-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                placeholder="Enter your email"
+              />
+              <button
+                type="submit"
+                class="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+              >
+                Subscribe
+              </button>
+            </div>
+          </form>
+```
+
+E também vamos alterar a `views.py` da `agenda` para receber a rota de participar do evento:
+
+```py
+def evento_participar(request):
+    evento_id = request.POST.get('evento-id')
+    email = request.POST.get('email')
+    print(f'evento_id => {evento_id}')
+    print(f'email => {email}')
+    evento = get_object_or_404(Evento, id=evento_id)
+    participante = Participante()
+    participante.email = email
+    participante.save()
+    evento_participante = EventoParticipante()
+    evento_participante.evento = evento
+    evento_participante.participante = participante
+    evento_participante.save()
+        
+    return HttpResponseRedirect(reverse('exibir_evento', args=(evento_id,)))
+```
+
+Perceba que ao final da requisição é feito um redirecionamento para a `view` de exibir evento. Para impedir que ao atualizar a página a última ação seja feita novamente.
+
+E declarar essa rota no arquivo `urls.py` da `agenda`:
+
+```py
+urlpatterns = [
+    path('', listar_eventos, name="listar_eventos"),
+    path('eventos/<int:id>', exibir_evento, name="exibir_evento"),
+    path('participar', evento_participar, name="evento_participar")
+]
+```

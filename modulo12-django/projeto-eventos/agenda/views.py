@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
+from django.urls import reverse
 
 from agenda.models import Evento, EventoParticipante, Participante
 
@@ -39,9 +40,12 @@ def evento_participar(request):
     print(f'evento_id => {evento_id}')
     print(f'email => {email}')
     evento = get_object_or_404(Evento, id=evento_id)
-    participante = Participante(email)
+    participante = Participante()
+    participante.email = email
     participante.save()
-    evento_participante = EventoParticipante(evento, participante)
+    evento_participante = EventoParticipante()
+    evento_participante.evento = evento
+    evento_participante.participante = participante
     evento_participante.save()
         
-    return HttpResponseRedirect(f'/evento/{id}')
+    return HttpResponseRedirect(reverse('exibir_evento', args=(evento_id,)))
