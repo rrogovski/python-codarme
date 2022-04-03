@@ -184,3 +184,86 @@ antes < agora
 
 ## Testando com datetime
 
+Vamos criar os testes para nossa aplicação nas funções que trabalham com datas:
+
+```py
+def adiar_notificacao(self, minutos):
+    """
+    Adia a notificação em uma certa quantidade de minutos.
+
+    Notificacao: 25/02/2022, 14h30
+    adiar_notificacao(15)
+    => Notificacao: 25/02/2022, 14h45
+    """
+    pass
+```
+
+Então vamos começar criando um novo _case_ de testes e simples executar para ver :
+
+```py
+def test_adia_notificacao_em_N_minutos(self):
+    tarefa = Tarefa("Fazer passar esse teste")
+    tarefa.adiar_notificacao(15)
+```
+
+Ao tentar executar os testes, teremos uma falha pois ainda não temos nada implementado. Então podemos fazer:
+
+```py
+def adiar_notificacao(self, minutos):
+    """
+    Adia a notificação em uma certa quantidade de minutos.
+
+    Notificacao: 25/02/2022, 14h30
+    adiar_notificacao(15)
+    => Notificacao: 25/02/2022, 14h45
+    """
+    if self.data_notificacao is None:
+        return
+
+    self.data_notificacao + minutos
+```
+
+Ao executar novamente os nossos testes, não teremos mais erros, mas ainda não fizemos o _assert_ do nosso teste, para realmente fazer a validação, então:
+
+```py
+class TestAdiarNotificacao(unittest.TestCase):
+    def test_adia_notificacao_em_N_minutos(self):
+        dt_original = datetime(2022, 2, 10, 9, 10)  # year, month, day, hour, minute, second, millisecond
+        tarefa = Tarefa("Estudar Python", data_notificacao=dt_original)
+        tarefa.adiar_notificacao(15)
+
+        dt_esperado = datetime(2022, 2, 10, 9, 25)
+        self.assertEqual(tarefa.data_notificacao, dt_esperado)
+```
+
+Dessa forma se tentarmos dessa forma como foi implementada a nossa lógia em `adiar_notificacao`, teremos outro erro, pois o atributo minuto é imutável (_'datetime.datetime' objects is not writeble_).
+
+Para que possamos alterar o valor desse atributo usamos o `timedelta` pelo `from datetime import timedelta`, algumas operações possíveis são:
+
+```py
+agora = datetime.now()
+
+agora + timedelta(days=3) # para adicionar 3 dias
+agora + timedelta(minutes=65) # para adicionar 65 minutos, assim a hora também é imcrementada em 1 hora e os munitos 5 
+```
+
+Assim o `deltatime` cria um novo objeto `datetime`.
+
+[Para saber mais sobre o _timedelta_](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
+
+Então podemos alterar nossa implementação para:
+
+```py
+ def adiar_notificacao(self, minutos):
+    """
+    Adia a notificação em uma certa quantidade de minutos.
+
+    Notificacao: 25/02/2022, 14h30
+    adiar_notificacao(15)
+    => Notificacao: 25/02/2022, 14h45
+    """
+    if self.data_notificacao is None:
+        return
+
+    self.data_notificacao = self.data_notificacao + timedelta(minutes=minutos)
+```

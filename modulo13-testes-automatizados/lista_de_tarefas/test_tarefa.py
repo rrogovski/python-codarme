@@ -21,7 +21,9 @@ class TestAdiarNotificacao(unittest.TestCase):
     def test_adia_notificacao_em_N_minutos(self):
         dt_original = datetime(2022, 2, 10, 9, 10)  # year, month, day, hour, minute, second, millisecond
         tarefa = Tarefa("Estudar Python", data_notificacao=dt_original)
-        tarefa.adiar_notificacao(15)
+        teste = tarefa.adiar_notificacao(15)
+        
+        print(f"tarefa.data_notificacao => {tarefa.data_notificacao}")
 
         dt_esperado = datetime(2022, 2, 10, 9, 25)
         self.assertEqual(tarefa.data_notificacao, dt_esperado)

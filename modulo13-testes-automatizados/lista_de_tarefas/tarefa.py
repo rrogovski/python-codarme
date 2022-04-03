@@ -33,7 +33,7 @@ class Tarefa:
         if self.data_notificacao is None:
             return
 
-        self.data_notificacao + timedelta(minutes=minutos)
+        self.data_notificacao = self.data_notificacao + timedelta(minutes=minutos)
 
     def atrasada(self):
         """
