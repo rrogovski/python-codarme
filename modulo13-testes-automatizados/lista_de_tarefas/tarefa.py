@@ -20,7 +20,7 @@ class Tarefa:
         """
         Adiciona uma descrição para a tarefa.
         """
-        pass
+        self.descricao = descricao
 
     def adiar_notificacao(self, minutos):
         """

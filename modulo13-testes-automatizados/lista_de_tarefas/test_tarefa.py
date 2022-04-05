@@ -27,7 +27,14 @@ class TestAdiarNotificacao(unittest.TestCase):
 
         dt_esperado = datetime(2022, 2, 10, 9, 25)
         self.assertEqual(tarefa.data_notificacao, dt_esperado)
-
+        
+class TestAdicionarDescricao(unittest.TestCase):
+    def test_add_descricao(self):
+        descricao = 'Descrição da tarefa teste'
+        tarefa = Tarefa("Tarefa teste", data_notificacao=datetime.now())
+        tarefa.adicionar_descricao(descricao)
+        
+        self.assertEqual(tarefa.descricao, descricao)
 
 
 unittest.main()
