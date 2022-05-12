@@ -247,7 +247,7 @@ agora + timedelta(days=3) # para adicionar 3 dias
 agora + timedelta(minutes=65) # para adicionar 65 minutos, assim a hora também é imcrementada em 1 hora e os munitos 5 
 ```
 
-Assim o `deltatime` cria um novo objeto `datetime`.
+Assim o `deltatime` cria um novo objeto `datetime`, pois o objeto `agora` é imutável.
 
 [Para saber mais sobre o _timedelta_](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
 
@@ -267,3 +267,6 @@ Então podemos alterar nossa implementação para:
 
     self.data_notificacao = self.data_notificacao + timedelta(minutes=minutos)
 ```
+
+## Testando a Lista de Tarefas
+

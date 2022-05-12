@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from tarefa import Tarefa
 
 
@@ -35,6 +35,20 @@ class TestAdicionarDescricao(unittest.TestCase):
         tarefa.adicionar_descricao(descricao)
         
         self.assertEqual(tarefa.descricao, descricao)
+        
+class TestVerificarTarefaAtrasada(unittest.TestCase):
+    def test_verificar_tarefa_atrasada(self):
+        hoje = datetime.now()
+        tarefa = Tarefa("Estudar Python", data=hoje - timedelta(days=1))
+        
+        self.assertEqual(tarefa.atrasada(), True)
+        
+class TestVerificarTarefaNaoAtrasada(unittest.TestCase):
+    def test_verificar_tarefa_atrasada(self):
+        hoje = datetime.now()
+        tarefa = Tarefa("Estudar Python", data=hoje + timedelta(days=1))
+        
+        self.assertEqual(tarefa.atrasada(), False)
 
 
 unittest.main()
