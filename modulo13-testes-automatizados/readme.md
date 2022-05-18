@@ -270,3 +270,24 @@ Então podemos alterar nossa implementação para:
 
 ## Testando a Lista de Tarefas
 
+Apenas um adendo para a implementação do teste das tarefas em atraso, pois utilizei o `timedelta(seconds=1)` para que a comparação das datas usando o `datetime.now()` estivesse 1 segundo a frente, caso o teste demore mais tempo para executar, aumente esse tempo.
+
+
+```py
+class TestGetTarefasAtrasadas(unittest.TestCase):
+    def test_retorna_lista_tarefas_atrasadas(self):
+        hoje = datetime.now()
+        tarefa_um = Tarefa("Tarefa Teste 1", data=hoje - timedelta(minutes=10))
+        tarefa_dois = Tarefa("Tarefa Teste 2", data=hoje - timedelta(days=2))
+        tarefa_tres = Tarefa("Tarefa Teste 3", data=hoje + timedelta(seconds=1))
+        tarefa_quatro = Tarefa("Tarefa Teste 4", data=hoje + timedelta(days=1))
+        lista = ListaDeTarefas()
+        
+        lista.adicionar_tarefa(tarefa_um)
+        lista.adicionar_tarefa(tarefa_dois)
+        lista.adicionar_tarefa(tarefa_tres)
+        lista.adicionar_tarefa(tarefa_quatro)
+        
+        self.assertListEqual([tarefa_um, tarefa_dois], lista.get_tarefas_atrasadas())
+```
+
