@@ -291,3 +291,39 @@ class TestGetTarefasAtrasadas(unittest.TestCase):
         self.assertListEqual([tarefa_um, tarefa_dois], lista.get_tarefas_atrasadas())
 ```
 
+### Testando nosso projeto Django
+
+Para iniciar nossos testes, vamos no diretório da aplicação `agenda`, lá teremos um arquivo `tests.py` que o próprio _Django_ fornece. A partir dele vamos começar a escrever nossos testes.
+
+Note que o _import_ usado nesse caso é `from django.test import TestCase`, diferente do `import unittest`, que trás mais funcionalidades.
+
+Para simular o nosso primeiro teste, vamos simular requisição _HTTP_ do método _GET_ de um cliente (geralmente um browser como Chrome ou Firefox), para isso precisamos importar de `django.test` a classe `Client`:
+
+```py
+from django.test import TestCase, Client
+```
+
+Vamos criar o nosso teste, onde verifica se na página inicial tem um terminado elemento _ HTML_:
+
+```py
+class TestPaginaInicial(TestCase):
+    def test_lista_eventos(self):
+        client = Client()
+        response = client.get("/")
+        print(response.content)
+        self.assertContains(response,"""<h2 class="text-3xl font-bold mb-12 pb-4 text-center">Últimos Eventos</h2>""")
+```
+
+Usando o `print(response.content)`, podemos ver o conteúdo da nossa resposta que inicia com um `b` que indica que é um código binário.
+
+Esse teste é uma das abordagem possíveis. Outra forma é verificar se página inicial está usando o _template_ correto. Pois se mantermos a da forma como está, todas vez que fizermos uma alteração no nosso _template_ precisaremos alterar também o nosso teste para que ele não quebre.
+
+```py
+class TestPaginaInicial(TestCase):
+    def test_lista_eventos(self):
+        client = Client()
+        response = client.get("/")
+        self.assertTemplateUsed(response, "agenda/listar_eventos.html")
+```
+
+### Testando a listagem de eventos
