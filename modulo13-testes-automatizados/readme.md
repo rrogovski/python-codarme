@@ -291,7 +291,7 @@ class TestGetTarefasAtrasadas(unittest.TestCase):
         self.assertListEqual([tarefa_um, tarefa_dois], lista.get_tarefas_atrasadas())
 ```
 
-### Testando nosso projeto Django
+## Testando nosso projeto Django
 
 Para iniciar nossos testes, vamos no diretório da aplicação `agenda`, lá teremos um arquivo `tests.py` que o próprio _Django_ fornece. A partir dele vamos começar a escrever nossos testes.
 
@@ -332,7 +332,7 @@ class TestPaginaInicial(TestCase):
         self.assertTemplateUsed(response, "agenda/listar_eventos.html")
 ```
 
-### Testando a listagem de eventos
+## Testando a listagem de eventos
 
 Vamos fazer os testes baseados no _Happy Path_, caminho "caminho feliz" ou o "caminho esperado".
 
@@ -434,7 +434,7 @@ class TestListagemDeEventos(TestCase):
         self.assertEqual(list(response.context["eventos"]), [evento])
 ```
 
-### Expondo um bug com testes
+## Expondo um bug com testes
 
 Vamos criar um teste para um caso de borda ou _edge case_, vamos incluir mais um teste em nossa suité de testes, `class TestListagemDeEventos(TestCase)`:
 
