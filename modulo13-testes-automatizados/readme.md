@@ -334,7 +334,9 @@ class TestPaginaInicial(TestCase):
 
 ### Testando a listagem de eventos
 
-Uma informação importante sobre a execução de testes no _Django_ é que ele cria um banco de dos específico para a execução dos testes e ao final esse banco é destruido, assim podemos fazer testes que envolvam persistência de dados sem influência em nossa base de dados real, seja ela de produção ou desenvolvimento.
+Vamos fazer os testes baseados no _Happy Path_, caminho "caminho feliz" ou o "caminho esperado".
+
+Uma informação importante sobre a execução de testes no _Django_ é que ele cria, **por padrão**, um banco de dos específico para a execução de cada teste e ao final esse banco é destruido, assim podemos fazer testes que envolvam persistência de dados sem influenciar outros testes ou em nossa base de dados real, seja ela de produção ou desenvolvimento.
 
 ![Django](../modulo12-django/img/14.png "Django")
 
@@ -411,7 +413,7 @@ Mas se tentarmos sem converter o _QuerySet_ em uma _list_, teremos o erro:
 
 ![Django](../modulo12-django/img/15.png "Django")
 
-Para isso faça:
+Para corrigir esse erro, faça:
 
 ```py
 class TestListagemDeEventos(TestCase):
@@ -431,3 +433,66 @@ class TestListagemDeEventos(TestCase):
         response = client.get("/")
         self.assertEqual(list(response.context["eventos"]), [evento])
 ```
+
+### Expondo um bug com testes
+
+Vamos criar um teste para um caso de borda ou _edge case_, vamos incluir mais um teste em nossa suité de testes, `class TestListagemDeEventos(TestCase)`:
+
+```py
+def test_eventos_sem_data_sao_exibidos(self):
+    categoria = Categoria()
+    categoria.nome = "Back-end"
+    categoria.save()
+    
+    evento = Evento()
+    evento.nome = "Aula de Python"
+    evento.categoria = categoria
+    evento.local = "Sinop"
+    evento.data = None
+    evento.save()
+    
+    client = Client()
+    response = client.get("/")
+    self.assertContains(response, "Aula de Python")
+    self.assertContains(response, "A definir")
+    self.assertEqual(list(response.context["eventos"]), [evento])
+```
+
+Antes de executar nosso teste, vamos alterar nossa regra para listar os eventos em nossa `agenda/views.py` de:
+
+```py
+def listar_eventos(request):
+    eventos = Evento.objects.filter(data__gte=date.today()).order_by('data')
+    
+    for evento in eventos:
+        evento.random = '{:0>3}'.format(randrange(1, 120))
+    
+    get_random = '{:0>3}'.format(randrange(120))
+    return render(
+        request=request, 
+        context={ "eventos": eventos, 'get_random': get_random }, 
+        template_name="agenda/listar_eventos.html"
+    )
+```
+
+Para:
+
+```py
+def listar_eventos(request):
+    eventos = Evento.objects.exclude(data__lt=date.today()).order_by('data')
+    
+    for evento in eventos:
+        evento.random = '{:0>3}'.format(randrange(1, 120))
+    
+    get_random = '{:0>3}'.format(randrange(120))
+    return render(
+        request=request, 
+        context={ "eventos": eventos, 'get_random': get_random }, 
+        template_name="agenda/listar_eventos.html"
+    )
+```
+
+Ao executar nossos testes, temos um erro onde não foi encontrado "A definir", pois não cumprimos corretamente um dos nossos requisitos:
+
+
+![Django](../modulo12-django/img/16.png "Django")

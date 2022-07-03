@@ -10,7 +10,8 @@ from agenda.models import Evento, EventoParticipante, Participante
 
 # Create your views here.
 def listar_eventos(request):
-    eventos = Evento.objects.filter(data__gte=date.today()).order_by('data')
+    # eventos = Evento.objects.filter(data__gte=date.today()).order_by('data')
+    eventos = Evento.objects.exclude(data__lt=date.today()).order_by('data')
     # get_random =  str(range(100)).zfill(3)
     # get_random = '%03d' % range(100)
     
