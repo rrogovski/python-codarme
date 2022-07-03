@@ -314,6 +314,12 @@ class TestPaginaInicial(TestCase):
         self.assertContains(response,"""<h2 class="text-3xl font-bold mb-12 pb-4 text-center">Últimos Eventos</h2>""")
 ```
 
+E agora para executar nosos testes o próprio _Django_ vai fazer o _Test Discovery_, pois ele procurar por todos os arquivos `tests.py` e executa os testes. Para isso, usamos o comando:
+
+```sh
+python manage.py test
+```
+
 Usando o `print(response.content)`, podemos ver o conteúdo da nossa resposta que inicia com um `b` que indica que é um código binário.
 
 Esse teste é uma das abordagem possíveis. Outra forma é verificar se página inicial está usando o _template_ correto. Pois se mantermos a da forma como está, todas vez que fizermos uma alteração no nosso _template_ precisaremos alterar também o nosso teste para que ele não quebre.
@@ -327,3 +333,101 @@ class TestPaginaInicial(TestCase):
 ```
 
 ### Testando a listagem de eventos
+
+Uma informação importante sobre a execução de testes no _Django_ é que ele cria um banco de dos específico para a execução dos testes e ao final esse banco é destruido, assim podemos fazer testes que envolvam persistência de dados sem influência em nossa base de dados real, seja ela de produção ou desenvolvimento.
+
+![Django](../modulo12-django/img/14.png "Django")
+
+
+Assim podemos fazer o nosso teste da sequinte forma:
+
+
+```py
+class TestListagemDeEventos(TestCase):
+    def test_evento_com_data_de_hoje_e_exibido(self):
+        categoria = Categoria()
+        categoria.nome = "Back-end"
+        categoria.save()
+        
+        evento = Evento()
+        evento.nome = "Aula de Python"
+        evento.categoria = categoria
+        evento.local = "Sinop"
+        evento.data = date.today()
+        evento.save()
+        
+        client = Client()
+        response = client.get("/")
+        self.assertContains(response, "Aula de Python")
+```
+
+Onde verificamos de no conteúdo da resposta tem a _String_ Aula de Python.
+
+Outra forma é usando o _context_ do _reponse_:
+
+```py
+class TestListagemDeEventos(TestCase):
+    def test_evento_com_data_de_hoje_e_exibido(self):
+        categoria = Categoria()
+        categoria.nome = "Back-end"
+        categoria.save()
+        
+        evento = Evento()
+        evento.nome = "Aula de Python"
+        evento.categoria = categoria
+        evento.local = "Sinop"
+        evento.data = date.today()
+        evento.save()
+        
+        client = Client()
+        response = client.get("/")
+        self.assertEqual(response.context["eventos"][0], evento)
+```
+
+No _context_ do _response_ temos um _QuerySet_ e podemos acessar o seu índice e verificar se é igual ao evento criado.
+
+Outra forma possível é:
+
+```py
+class TestListagemDeEventos(TestCase):
+    def test_evento_com_data_de_hoje_e_exibido(self):
+        categoria = Categoria()
+        categoria.nome = "Back-end"
+        categoria.save()
+        
+        evento = Evento()
+        evento.nome = "Aula de Python"
+        evento.categoria = categoria
+        evento.local = "Sinop"
+        evento.data = date.today()
+        evento.save()
+        
+        client = Client()
+        response = client.get("/")
+        self.assertEqual(response.context["eventos"], [evento])
+```
+
+Mas se tentarmos sem converter o _QuerySet_ em uma _list_, teremos o erro:
+
+![Django](../modulo12-django/img/15.png "Django")
+
+Para isso faça:
+
+```py
+class TestListagemDeEventos(TestCase):
+    def test_evento_com_data_de_hoje_e_exibido(self):
+        categoria = Categoria()
+        categoria.nome = "Back-end"
+        categoria.save()
+        
+        evento = Evento()
+        evento.nome = "Aula de Python"
+        evento.categoria = categoria
+        evento.local = "Sinop"
+        evento.data = date.today()
+        evento.save()
+        
+        client = Client()
+        response = client.get("/")
+        self.assertEqual(list(response.context["eventos"]), [evento])
+```
