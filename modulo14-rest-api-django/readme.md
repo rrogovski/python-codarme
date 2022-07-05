@@ -52,3 +52,18 @@ Acrônimo para _Representational State Transfer_, representação e manipulaçã
 ### JSON != HTTP
 
 ![API REST](./img/07.png "API REST")
+
+## Configurando o nosso projeto
+
+Agora vamos criar um novo projeto para usar o _Django Rest Framework_:
+
+```sh
+mkdir drf-api
+cd drf-api
+python -m venv venv
+source venv/bin/activate
+pip install Django
+pip install djangorestframework 
+django-admin startproject tamarcado .
+django-admin startapp agenda
+```
