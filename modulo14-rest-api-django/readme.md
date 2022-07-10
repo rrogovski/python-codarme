@@ -143,7 +143,7 @@ Podemos criar agora a nossas _urls_ e _views_. Para isso precisaremos de um arqu
 
 ```py
 from django.urls import path
-from views import agendamento_detail
+from agenda.views import agendamento_detail
 
 urlpatterns = [
     # path('agendamentos/',agendamento_list),
@@ -161,7 +161,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('agenda/urls'))
+    path('api/', include('agenda.urls'))
 ]
 ```
 
@@ -193,3 +193,51 @@ def agendamento_detail(request, id):
 ```
 
 Assim podemos fazer o retorno desse objeto de forma serializada em _JSON_.
+
+## Serialização de um Agendamento
+
+O _Django Rest Framework_ oferece serializadores ou _serializers_. Para implementar, vamos criar o arquivo `agenda/serializers.py`
+
+```py
+from rest_framework import serializers
+
+class AgendamentoSerializer(serializers.Serializer):
+    data_horario = serializers.DateTimeField()
+    nome_cliente = serializers.CharField(max_length=200)
+    email_cliente = serializers.EmailField()
+    telefone_cliente = serializers.CharField(max_length=20)
+```
+
+Nesse arquivo criamos uma classe que fará a serialização do nosso modelo `Agendamento` de um para um dos atributos.
+
+Para fazer uso desse serializador, importamos em nossa `agenda/views.py`:
+
+```py
+from django.shortcuts import get_object_or_404, render
+from agenda.models import Agendamento
+from agenda.serializers import AgendamentoSerializer
+
+# Create your views here.
+def agendamento_detail(request, id):
+    agendamento = get_object_or_404(Agendamento.objects.get(id=id))
+    serializer = AgendamentoSerializer(agendamento)
+```
+
+E ao passarmos um instância de `Agendamento` para o construtor do `AgendamentoSerializer`, ele tentará criar encontrar, por padrão, ele vai tentar encontrar na instância passada os campos com nomes que declaramos em nosso serializador, por isso utilizamos os mesmos nomes que os atributos do nosso modelo.
+
+Com isso podemos usar `serializer.data` que terá uma representação ainda em dicionário do _Python_. E fazer o retorno dos dados utilizando o `JsonResponse` do _Django_ que já indica no `header` setado como `application/json`:
+
+```py
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from agenda.models import Agendamento
+from agenda.serializers import AgendamentoSerializer
+
+# Create your views here.
+def agendamento_detail(request, id):
+    agendamento = get_object_or_404(Agendamento.objects.get(id=id))
+    serializer = AgendamentoSerializer(agendamento)
+    return JsonResponse(serializer.data) 
+```
+
+Para testar b

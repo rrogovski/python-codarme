@@ -1,5 +1,5 @@
 from django.urls import path
-from views import agendamento_detail
+from agenda.views import agendamento_detail
 
 urlpatterns = [
     # path('agendamentos/',agendamento_list),
