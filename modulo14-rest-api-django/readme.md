@@ -67,3 +67,129 @@ pip install djangorestframework
 django-admin startproject tamarcado .
 django-admin startapp agenda
 ```
+
+## Planejando a nossa API
+
+### API
+
+Endpoits para os recursos:
+
+- Listar agendamentos: `GET /agendamentos/`
+- Detalhar agendamento: `GET /agendamentos/<id>/`
+- Criar agendamento: `POST /agendamentos/`
+- Excluir agendamento: `DELETE /agendamentos/<id>/`
+- Editar agendamento parcialmente `PATCH /agendamentos/<id>/`
+- Listar horarios: `GET /horarios/?data=2022-03-01`
+
+## Criando o modelo Agendamento
+
+Para criar nosso primeiro modelo, `Agendamento`, vamos no nossa _App_ `agenda` e em `models.py`:
+
+```py
+class Agendamento(models.Model):
+    data_horario = models.DateTimeField()
+    nome_cliente = models.CharField()
+    email_cliente = models.EmailField()
+    telefone_cliente = models.CharField()
+```
+
+Lembrando que o nosso modelo herada de `models.Model` da classe `django.db`, pois ele vai ser um modelo criado no nosso banco de dados. E os atributos do nosso modelo serão tipos de `models`.
+
+Feito vamos adicionar nosso _App_ `agenda` como uma aplicação instalada do nosso projeto, para isso, vamos em `tamarcado/settings.py` e em:
+
+```py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
+Vamos adicionar `agenda`:
+
+```py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'agenda',
+]
+```
+
+Feito isso, podemos tentar criar nossas _migrations_ com `python manage.py makemigrations`.
+
+Mas da forma como definimos nosso modelo, temos o seguinte erro:
+
+![API REST](./img/08.png "API REST")
+
+Pois todo atribuito do tipo `CharField()` precisamos declarar um `max_length`.
+
+Agora ao criar nossas _migrations_ com `python manage.py makemigrations`.
+
+![API REST](./img/09.png "API REST")
+
+Assim podemos executar nossas _migrations_ com `python manage.py migrate`:
+
+![API REST](./img/10.png "API REST")
+
+Podemos criar agora a nossas _urls_ e _views_. Para isso precisaremos de um arquivo na nossa aplicação `agenda` chamado `urls.py` com o seguinte conteúdo:
+
+
+```py
+from django.urls import path
+from views import agendamento_detail
+
+urlpatterns = [
+    # path('agendamentos/',agendamento_list),
+    path('agendamentos/<int:id>/', agendamento_detail),
+]
+```
+
+Por padrão o _Django Rest Framework_ sugere os nomes `resource_list`, obviamente para uma lista, e `resource_detail`, para detalhar um item da lista.
+
+E incluir esse arquivo `agenda/urls.py`, no arquivo `tamarcado/urls.py`:
+
+```py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('agenda/urls'))
+]
+```
+
+E agora vamos criar nossas _views_ em `agenda/views.py`:
+
+Que poderia ser algo do tipo:
+
+```py
+from django.shortcuts import render
+from agenda.models import Agendamento
+
+# Create your views here.
+def agendamento_detail(request, id):
+    try:
+        agendamento = Agendamento.objects.get(id=id)
+    except:
+        raise('Mensagem de erro')
+```
+
+Mas o _Django_ já oferece a funcção `get_object_or_404` para isso.
+
+```py
+from django.shortcuts import get_object_or_404, render
+from agenda.models import Agendamento
+
+# Create your views here.
+def agendamento_detail(request, id):
+    agendamento = get_object_or_404(Agendamento.objects.get(id=id))
+```
+
+Assim podemos fazer o retorno desse objeto de forma serializada em _JSON_.
