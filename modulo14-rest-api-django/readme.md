@@ -208,7 +208,7 @@ class AgendamentoSerializer(serializers.Serializer):
     telefone_cliente = serializers.CharField(max_length=20)
 ```
 
-Nesse arquivo criamos uma classe que fará a serialização do nosso modelo `Agendamento` de um para um dos atributos.
+Nesse arquivo criamos uma classe que fará a serialização do nosso modelo `Agendamento` de um para um dos seus atributos.
 
 Para fazer uso desse serializador, importamos em nossa `agenda/views.py`:
 
@@ -235,9 +235,50 @@ from agenda.serializers import AgendamentoSerializer
 
 # Create your views here.
 def agendamento_detail(request, id):
-    agendamento = get_object_or_404(Agendamento.objects.get(id=id))
+    agendamento = get_object_or_404(Agendamento, id=id)
     serializer = AgendamentoSerializer(agendamento)
-    return JsonResponse(serializer.data) 
+    return JsonResponse(serializer.data)
 ```
 
-Para testar b
+Para testar podemos usar o _Django Admin_ ou o _shell_. Pelo _Django Admin_, precisamos antes registrar nosso modelo em `agenda/admin.py`:
+
+```py
+from django.contrib import admin
+
+from agenda.models import Agendamento
+
+# Register your models here.
+admin.site.register(Agendamento)
+```
+
+E caso ainda não tenha criado o super usuário, execute:
+
+```sh
+python manage.py createsuperuser
+```
+
+Informe usuário, e-mail e senha.
+
+Depois executer o servidor:
+
+```sh
+python manager.py runserver
+```
+
+E acessar `localhost:8000/admin` e fazer o _login_ com o usuário criado. Assim você poderá criar novos agendamentos.
+
+Outra forma é pelo _shell do Django_, para isso execute:
+
+```sh
+python manager.py shell
+```
+
+Assim você terá acesso a _CLI_ do _Django_ e pode criar novas instâncias dos modelos que acabamos de criar, excecute os camandos:
+
+```sh
+python manager.py shell # para acessar o shell
+from agenda.models import Agendamento # para fazer o import do nosso model
+from datetime import datetime # para podemos atribuir a data_horario do agendamento
+agendamento = Agendamento(data_horario=datetime.now(), nome_cliente="John Doe", email_cliente="johndoe@mail.com",telefone_cliente=99999999999) # para criar uma instância de agendamento
+agendamento.save() # para persistir os dados na base de dados
+``` 
