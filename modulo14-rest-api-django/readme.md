@@ -282,3 +282,34 @@ from datetime import datetime # para podemos atribuir a data_horario do agendame
 agendamento = Agendamento(data_horario=datetime.now(), nome_cliente="John Doe", email_cliente="johndoe@mail.com",telefone_cliente=99999999999) # para criar uma instância de agendamento
 agendamento.save() # para persistir os dados na base de dados
 ``` 
+
+## Serialização de ums lista de Agendamentos
+
+Vamos descomentar a _url_ para `agendamento_list` em `agenda/urls.py`:
+
+```py
+from django.urls import path
+from agenda.views import agendamento_detail, agendamento_list
+
+urlpatterns = [
+    path('agendamentos/',agendamento_list),
+    path('agendamentos/<int:id>/', agendamento_detail),
+```
+
+E agora criar nossa função `agendamento_list` em `agenda/views.py`:
+
+
+```py
+def agendamento_list(request):
+    # retornar um querySet que é um iterável que representa uma lista de objetos
+    # mas não é uma lista
+    qs = Agendamento.objects.all()
+    # como temos vários objetos, podemos usar nosso serializer para serializar
+    # passando o querySet com o parâmetro many=True
+    serializer = AgendamentoSerializer(qs, many=True)
+    # Por padrão, o JsonResponse serializa apenas do tipo dicionário para JSON
+    # mas como estamos serializando um querySet, precisamos passar o parâmetro
+    # safe=False para que ele saiba que não é um dicionário
+    return JsonResponse(serializer.data, safe=False)
+```
+
