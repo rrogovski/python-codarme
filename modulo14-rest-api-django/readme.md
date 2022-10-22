@@ -313,3 +313,53 @@ def agendamento_list(request):
     return JsonResponse(serializer.data, safe=False)
 ```
 
+## Utilizando o decorator api_view
+
+Agora vamos tratar para que nossa api retorne uma informação e não um erro, quando um agendamento não encontrado.
+
+Para que o _decorator_ `@api_view`, funcione, certifique-se adicionar o _App_ `rest_framework` como uma aplicação instalada do nosso projeto, para isso, vamos em `tamarcado/settings.py` e em:
+
+```py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'agenda',
+]
+```
+
+Assim podemos usar esse _decorator_ da seguinte forma em `agenda/views.py`:
+
+```py
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404, render
+from agenda.models import Agendamento
+from agenda.serializers import AgendamentoSerializer
+
+# Create your views here.
+@api_view(["GET"])
+def agendamento_detail(request, id):
+    agendamento = get_object_or_404(Agendamento, id=id)
+    serializer = AgendamentoSerializer(agendamento)
+    return JsonResponse(serializer.data)
+
+@api_view(http_method_names=["GET"])
+def agendamento_list(request):
+    # retornar um querySet que é um iterável que representa uma lista de objetos
+    # mas não é uma lista
+    qs = Agendamento.objects.all()
+    # como temos vários objetos, podemos usar nosso serializer para serializar
+    # passando o querySet com o parâmetro many=True
+    serializer = AgendamentoSerializer(qs, many=True)
+    # Por padrão, o JsonResponse serializa apenas do tipo dicionário para JSON
+    # mas como estamos serializando um querySet, precisamos passar o parâmetro
+    # safe=False para que ele saiba que não é um dicionário
+    return JsonResponse(serializer.data, safe=False)
+```
+
+Dessa forma, quando termos acessar um agendamento que não exista, deremos um erro 404.
