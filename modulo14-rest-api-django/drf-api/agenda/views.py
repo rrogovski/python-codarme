@@ -11,15 +11,37 @@ def agendamento_detail(request, id):
     serializer = AgendamentoSerializer(agendamento)
     return JsonResponse(serializer.data)
 
-@api_view(http_method_names=["GET"])
+@api_view(http_method_names=["GET", "POST"])
 def agendamento_list(request):
-    # retornar um querySet que é um iterável que representa uma lista de objetos
-    # mas não é uma lista
-    qs = Agendamento.objects.all()
-    # como temos vários objetos, podemos usar nosso serializer para serializar
-    # passando o querySet com o parâmetro many=True
-    serializer = AgendamentoSerializer(qs, many=True)
-    # Por padrão, o JsonResponse serializa apenas do tipo dicionário para JSON
-    # mas como estamos serializando um querySet, precisamos passar o parâmetro
-    # safe=False para que ele saiba que não é um dicionário
-    return JsonResponse(serializer.data, safe=False)
+    if request.method == "GET":
+        # retornar um querySet que é um iterável que representa uma lista de objetos
+        # mas não é uma lista
+        qs = Agendamento.objects.all()
+        # como temos vários objetos, podemos usar nosso serializer para serializar
+        # passando o querySet com o parâmetro many=True
+        serializer = AgendamentoSerializer(qs, many=True)
+        # Por padrão, o JsonResponse serializa apenas do tipo dicionário para JSON
+        # mas como estamos serializando um querySet, precisamos passar o parâmetro
+        # safe=False para que ele saiba que não é um dicionário
+        return JsonResponse(serializer.data, safe=False)
+    if request.method == "POST":
+        # serializa os dados recebidos no request
+        serializer = AgendamentoSerializer(data=request.data)
+        # verifica se os dados são válidos
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            # cria um objeto com os dados validados usando o **kwargs
+            # Agendamento.objects.create(**validated_data)
+            # ou proderiamos criar da seguinte forma:
+            Agendamento.objects.create(
+                data_horario=validated_data["data_horario"],
+                nome_cliente=validated_data["nome_cliente"],
+                email_cliente=validated_data["email_cliente"],
+                telefone_cliente=validated_data["telefone_cliente"],
+            )
+            # persiste os dados no banco de dados
+            # serializer.save()
+            # retorna o objeto serializado com o status 201 para criado
+            return JsonResponse(serializer.data, status=201)
+        # se os dados não forem válidos, retorna o erro com o status 400
+        return JsonResponse(serializer.errors, status=400)

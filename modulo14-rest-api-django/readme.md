@@ -363,3 +363,94 @@ def agendamento_list(request):
 ```
 
 Dessa forma, quando termos acessar um agendamento que não exista, deremos um erro 404.
+
+## Criando um Agendamento
+
+Outro ponto importante é que quando utilizamos o _decorator_ `@api_view`, `request` que recebemos deixa de ser um objeto do _Django_ e passa a ser um objeto do _djangorestframework_.
+
+Dessa forma podemos tratar nossa função `agendamento_list` em `agenda/views.py`, para quando receber um `GET` ou um `POST`:
+
+```py
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404, render
+from agenda.models import Agendamento
+from agenda.serializers import AgendamentoSerializer
+
+# Create your views here.
+@api_view(["GET"])
+def agendamento_detail(request, id):
+    agendamento = get_object_or_404(Agendamento, id=id)
+    serializer = AgendamentoSerializer(agendamento)
+    return JsonResponse(serializer.data)
+
+@api_view(http_method_names=["GET", "POST"])
+def agendamento_list(request):
+    if request.method == "GET":
+        # retornar um querySet que é um iterável que representa uma lista de objetos
+        # mas não é uma lista
+        qs = Agendamento.objects.all()
+        # como temos vários objetos, podemos usar nosso serializer para serializar
+        # passando o querySet com o parâmetro many=True
+        serializer = AgendamentoSerializer(qs, many=True)
+        # Por padrão, o JsonResponse serializa apenas do tipo dicionário para JSON
+        # mas como estamos serializando um querySet, precisamos passar o parâmetro
+        # safe=False para que ele saiba que não é um dicionário
+        return JsonResponse(serializer.data, safe=False)
+    if request.method == "POST":
+        # serializa os dados recebidos no request
+        serializer = AgendamentoSerializer(data=request.data)
+        # verifica se os dados são válidos
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            # cria um objeto com os dados validados usando o **kwargs
+            # Agendamento.objects.create(**validated_data)
+            # ou proderiamos criar da seguinte forma:
+            Agendamento.objects.create(
+                data_horario=validated_data["data_horario"],
+                nome_cliente=validated_data["nome_cliente"],
+                email_cliente=validated_data["email_cliente"],
+                telefone_cliente=validated_data["telefone_cliente"],
+            )
+            # persiste os dados no banco de dados
+            # serializer.save()
+            # retorna o objeto serializado com o status 201 para criado
+            return JsonResponse(serializer.data, status=201)
+        # se os dados não forem válidos, retorna o erro com o status 400
+        return JsonResponse(serializer.errors, status=400)
+```
+
+Dessa forma, quando recebermos um `POST` válido para a criação de um novo agendamento, essa a função executada por essa rota, vai saber o que fazer.
+
+E como estamos usando o _Serializer_, podemos validar se o objeto _JSON_ enviado para criação de um novo agendamento é válido.
+
+[Para saber mais sobre _**kwargs_](https://djangocentral.com/how-to-use-args-and-kwargs-in-python/)
+
+Para teste vamos fazer uma requisição `POST` com um objeto inválido:
+
+```json
+{
+    "data": "2022-10-22T23",
+    "nome_cliente": "Teste api",
+    "email_cliente": "teste@mail.com",
+    "telefone_cliente": "99999999999"
+}
+```
+Teremos um erro 400:
+
+![API REST](./img/11.png "API REST")
+
+Uma requisição válida:
+
+```json
+{
+    "data_horario": "2022-10-22T23",
+    "nome_cliente": "Teste api",
+    "email_cliente": "teste@mail.com",
+    "telefone_cliente": "99999999999"
+}
+```
+
+Teremos como resposta o status 201 - _Created_ e o objeto enviado como retorno:
+
+![API REST](./img/12.png "API REST")
