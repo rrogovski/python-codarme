@@ -454,3 +454,8 @@ Uma requisição válida:
 Teremos como resposta o status 201 - _Created_ e o objeto enviado como retorno:
 
 ![API REST](./img/12.png "API REST")
+
+## Editando um Agendamento
+
+Para edição, como a rota é a mesma usada para detalhar um agendamento, vamos utilizar ela mesma para o método `PUT`, dessa forma vamos fazer o controle de fluxo para esses dois casos:
+

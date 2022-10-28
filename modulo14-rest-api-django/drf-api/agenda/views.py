@@ -5,11 +5,25 @@ from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
 # Create your views here.
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 def agendamento_detail(request, id):
-    agendamento = get_object_or_404(Agendamento, id=id)
-    serializer = AgendamentoSerializer(agendamento)
-    return JsonResponse(serializer.data)
+    if request.method == "GET":
+        agendamento = get_object_or_404(Agendamento, id=id)
+        serializer = AgendamentoSerializer(agendamento)
+        return JsonResponse(serializer.data)
+    
+    if request.method == "PUT":
+        agendamento = get_object_or_404(Agendamento, id=id)
+        serializer = AgendamentoSerializer(agendamento, data=request.data)
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            agendamento.data_horario = validated_data.get("data_horario", agendamento.data_horario)
+            agendamento.nome_cliente = validated_data.get("nome_cliente", agendamento.nome_cliente)
+            agendamento.email_cliente = validated_data.get("email_cliente", agendamento.email_cliente)
+            agendamento.telefone_cliente = validated_data.get("telefone_cliente", agendamento.telefone_cliente)
+            agendamento.save()
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=400)
 
 @api_view(http_method_names=["GET", "POST"])
 def agendamento_list(request):
@@ -24,6 +38,7 @@ def agendamento_list(request):
         # mas como estamos serializando um querySet, precisamos passar o parâmetro
         # safe=False para que ele saiba que não é um dicionário
         return JsonResponse(serializer.data, safe=False)
+    
     if request.method == "POST":
         # serializa os dados recebidos no request
         serializer = AgendamentoSerializer(data=request.data)
