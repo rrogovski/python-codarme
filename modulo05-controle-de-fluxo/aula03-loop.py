@@ -3,15 +3,17 @@
 # https://pt.khanacademy.org/computing/computer-science/cryptography/comp-number-theory/v/trial-division-primality-test-using-a-sieve-prime-adventure-part-5
 
 import math
+import time
 
 def verificar_primo(p):
     primo = (p % 2 != 0 or p <= 2) and p != 1
+    
     raiz = math.sqrt(p)
 
-    for i in range(3, int(raiz)):
+    for i in range(3, math.ceil(raiz)+1):
         if (p % i == 0):
             primo = False
-            i = math.floor(i + raiz)
+            i = i + raiz
 
     return primo
 
@@ -32,6 +34,8 @@ while True:
     except ValueError:
         print("🚨 Valor inválido. Tente novamente!\n")
 
+start_time = time.time()
+
 while start <= value_input:
     if verificar_primo(start):
         primos.append(start)
@@ -41,3 +45,13 @@ while start <= value_input:
 string_primos = [str(i) for i in primos]
 
 print(f"\n\nPrimos de 1 até {value_input} => {','.join(string_primos)}")
+
+print(f"Total de primos => {len(primos)}")
+
+print(
+    "--- Tempo de execução | início: {} - fim: {} | total: {} segundos ---".format(
+        time.strftime('%H:%M:%S', time.localtime(start_time)),
+        time.strftime('%H:%M:%S', time.localtime(time.time())),
+        time.time() - start_time
+    )
+)

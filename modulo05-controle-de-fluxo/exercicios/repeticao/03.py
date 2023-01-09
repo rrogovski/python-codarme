@@ -4,7 +4,7 @@ def verificar_primo(p):
     primo = (p % 2 != 0 or p <= 2) and p != 1
     raiz = math.sqrt(p)
 
-    for i in range(3, int(raiz)):
+    for i in range(3, math.ceil(raiz)+1):
         if (p % i == 0):
             primo = False
             i = math.floor(i + raiz)
